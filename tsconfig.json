@@ -10,6 +10,6 @@
     "outDir": "./dist/",
     "moduleResolution": "node"
   },
-  "include": ["./client/", "./server/"],
-  "exclode": ["./__mocks__", "./__tests__", "./dist"]
+  "include": ["./client/", "./server/", "./__tests__"],
+  "exclude": ["./__mocks__", "./dist", "./__tests__/**/*.js"]
 }
