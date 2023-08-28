@@ -6,7 +6,7 @@
   "scripts": {
     "dev": "concurrently \"nodemon ./server/server.ts\" \"webpack server\"",
     "dev-backend": "nodemon ./server/server.ts",
-    "test": "jest"
+    "test": "jest --verbose"
   },
   "keywords": [],
   "author": "",
