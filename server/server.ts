@@ -7,7 +7,7 @@ const PORT = 3000;
 app.use(express.json());
 app.use(express.urlencoded());
 
-//handle requests for static files
+// handle requests for static files
 app.use(express.static(path.resolve(__dirname, '../client')));
 
 app.get('/test', (_req: Request, res: Response) => {
@@ -29,13 +29,14 @@ type ServerError = {
 };
 // Error handler
 app.use(
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
   (err: ServerError, _req: Request, res: Response, _next: NextFunction) => {
     const defaultErr = {
       log: 'Express error handler caught unknown middleware error',
       status: 500,
       message: { err: 'An error occurred' },
     };
-    const errorObj = Object.assign({}, defaultErr, err);
+    const errorObj = { ...defaultErr, ...err };
     console.log(errorObj.log);
     return res.status(errorObj.status).json(errorObj.message);
   },
@@ -46,4 +47,4 @@ app.listen(PORT, () => {
   console.log(`Server listening on port: ${PORT}...`);
 });
 
-module.exports = app;
+export default app;
