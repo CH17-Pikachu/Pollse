@@ -1,7 +1,17 @@
+$primary-purple: #3b1568;
+$primary-yellow: #f5ac4e;
+$primary-red: #940700;
+$dark-red: #bb280f;
+$light-red: #dd4224;
+$light-purple: #813cb3;
+$primary-font: system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto,
+  Oxygen, Ubuntu, Cantarell, 'Open Sans', 'Helvetica Neue', sans-serif;
+
 body {
-  background-color: blue;
+  background-color: white;
 }
 
 p {
   font-size: 200px;
+  color: $primary-purple;
 }

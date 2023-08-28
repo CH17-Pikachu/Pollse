@@ -13,6 +13,7 @@ function App() {
 
   return (
     <div>
+      <img src='./assets/Pollse.png' alt='logo' />
       <p>{world}</p>
       <button type='button' onClick={testFetch}>
         CHANGE THE WORLD

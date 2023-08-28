@@ -7,6 +7,9 @@ const PORT = 3000;
 app.use(express.json());
 app.use(express.urlencoded());
 
+// handle requests for static files
+app.use(express.static(path.resolve(__dirname, '../client')));
+
 app.get('/test', (_req: Request, res: Response) => {
   res.status(200).json('World changed');
 });
