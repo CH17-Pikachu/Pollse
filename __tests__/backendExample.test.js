@@ -5,6 +5,7 @@ const server = 'http://localhost:3000'
 
 describe('Check test route', () => {
   it('Responds with "World changed"', async () => {
+    // Send the request and store the response
     const response = await request(server)
       .get('/test');
 
