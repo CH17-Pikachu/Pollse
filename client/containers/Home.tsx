@@ -4,9 +4,13 @@ import { NavLink } from 'react-router-dom';
 function Home() {
   return (
     <div>
-      <NavLink to='/presenter'>Create Poll</NavLink>
+      <NavLink className='presenter-btn' to='/presenter'>
+        Create Poll
+      </NavLink>
       <br />
-      <NavLink to='/audience'>Join Room</NavLink>
+      <NavLink className='audience-btn' to='/audience'>
+        Join Room
+      </NavLink>
     </div>
   );
 }
