@@ -18,8 +18,8 @@ app.use(express.static(path.resolve(__dirname, '../client')));
 /**
  * Setting up routes
  */
-app.use('/poll', pollRoute);
-app.use('/test', testRoute);
+app.use('/api/poll', pollRoute);
+app.use('/api/test', testRoute);
 
 // Serving the page
 app.get('/', (_req: Request, res: Response) => {
