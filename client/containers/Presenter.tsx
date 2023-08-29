@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { CreatePollRequestBody } from '../../types/types';
+import { StartPollRequestBody, CreatePollId } from '../../types/types';
 
 function Presenter() {
   // Will have pollId gotten from backend and passed in?
@@ -11,7 +11,7 @@ function Presenter() {
     async function getPollId(): Promise<void> {
       try {
         const pollIdResponse = await fetch(`/api/poll/createPoll`);
-        const pollIdData = await pollIdResponse.json() as { pollId: number };
+        const pollIdData = await pollIdResponse.json() as CreatePollId;
         setPollId(pollIdData.pollId);
       }
       catch (error) {
@@ -22,7 +22,7 @@ function Presenter() {
     getPollId().catch((error) => console.log(error));
   }, [])
 
-  async function createPoll(): Promise<void> {
+  async function startPoll(): Promise<void> {
     const questionValue = ((document.getElementById('pollQuestion') as HTMLFormElement).value as string);
 
     if (questionValue.length === 0 || answers.length === 0) {
@@ -30,7 +30,7 @@ function Presenter() {
       return;
     }
 
-    const fetchBody: CreatePollRequestBody = {
+    const fetchBody: StartPollRequestBody = {
       question: questionValue,
       timer: timerValue,
       answers 
@@ -99,7 +99,7 @@ function Presenter() {
         </label>
         <button type='submit'>Create</button>
       </form>
-      <button type='button' onClick={createPoll}>Create Poll</button>
+      <button type='button' onClick={startPoll}>Create Poll</button>
       <p>Answers:</p>
       {answersElements}
     </div>
