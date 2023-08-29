@@ -1,21 +1,20 @@
 import React, { useState } from 'react';
-
-interface FetchBody {
-  question: string;
-  timer: number;
-  answers: string[];
-}
+import { CreatePollRequestBody } from '../../types/types';
 
 function Presenter() {
   // Will have pollId gotten from backend and passed in?
   const pollId = 1;
   const [answers, setAnswers] = useState<string[]>([]);
+  const [timerValue, setTimerValue] = useState<number>(0);
   
   function createPoll() {
-    // UNFINISHED, need to fix the type error stuff
-    const questionValue: string = (document.getElementById('pollQuestion') as HTMLFormElement).value;
-    const timerValue: number = (document.getElementById('pollTimer') as HTMLFormElement).value;
-    const fetchBody: FetchBody = {
+    const questionValue = ((document.getElementById('pollQuestion') as HTMLFormElement).value as string);
+
+    if (questionValue.length === 0 || answers.length === 0) {
+      return;
+    }
+
+    const fetchBody: CreatePollRequestBody = {
       question: questionValue,
       timer: timerValue,
       answers 
@@ -28,7 +27,16 @@ function Presenter() {
       },
       body: JSON.stringify(fetchBody)
     })
-    .catch((err) => console.log(err));
+      .then((response) => response.json())
+      .then((data) => console.log(data)) // Do something with the data, need to know what we are doing
+      .catch((err) => console.log(err));
+  }
+
+  // Restricts timer so it will only take numbers
+  function updateTimerValue(inputValue: string): void {
+    if (/^[0-9]*$/.test(inputValue)) {
+      setTimerValue(Number(inputValue));
+    }
   }
 
   function createNewAnswer(e: React.FormEvent): void {
@@ -43,6 +51,7 @@ function Presenter() {
     setAnswers(answersCopy);
   }
 
+  // Create a paragraph element for each answer
   const answersElements: React.JSX.Element[] = []
   answers.forEach((el, i) => {
     answersElements.push(<p key={`answerElementKey${el}`}>{i + 1}: {el}</p>)
@@ -58,7 +67,7 @@ function Presenter() {
       <br />
       <label htmlFor='pollTimer'>
         Timer:
-        <input type='text' id='pollTimer' name='pollTimer' placeholder='Timer' />
+        <input type='text' id='pollTimer' name='pollTimer' placeholder='Seconds' value={timerValue} onChange={(e) => updateTimerValue(e.target.value)} />
       </label>
       <form onSubmit={(e) => createNewAnswer(e)}>
         <label htmlFor='newAnswerInput'>
