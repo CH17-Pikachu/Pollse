@@ -46,14 +46,14 @@ app.use(
       message: { err: 'An error occurred' },
     };
     const errorObj = { ...defaultErr, ...err };
-    logger(LogType.ERROR, errorObj.log);
+    logger(errorObj.log, LogType.ERROR);
     return res.status(errorObj.status).json(errorObj.message);
   },
 );
 
 // Begins listening to port 3000
 app.listen(PORT, () => {
-  logger(LogType.SUCCESS, `Server listening on port: ${PORT}...`);
+  logger(`Server listening on port: ${PORT}...`, LogType.SUCCESS);
 });
 
 export default app;
