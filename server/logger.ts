@@ -4,7 +4,12 @@
 
 import { LogType } from '../types/types';
 
-const logger = (logType: LogType, message: string): void => {
+/**
+ * Color coded console logging
+ * @param message log message
+ * @param logType defaults to NORMAL
+ */
+function logger( message: string, logType: LogType = LogType.NORMAL): void {
   let colorCode = 0; // LogType.NORMAL
   switch (logType) {
     case LogType.SUCCESS:
@@ -19,6 +24,7 @@ const logger = (logType: LogType, message: string): void => {
     default:
       break;
   }
+  // eslint-disable-next-line
   console.log(`\u001b[1;${colorCode}m ${`[${logType}] ${message}`}`);
 };
 
