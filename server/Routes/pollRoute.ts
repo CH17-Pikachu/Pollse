@@ -25,6 +25,7 @@ router.patch('/startPoll/:roomCode', (req, res) => {
 
 /**
  * Endpoint for stopping poll
+ * This will be where we add functionality
  */
 router.get('/endPoll/:roomCode', (req, res) => {
   res.send(200);
