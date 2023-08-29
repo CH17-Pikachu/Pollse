@@ -1,16 +1,32 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { CreatePollRequestBody } from '../../types/types';
 
 function Presenter() {
   // Will have pollId gotten from backend and passed in?
-  const pollId = 1;
+  const [pollId, setPollId] = useState<number | null>(null)
   const [answers, setAnswers] = useState<string[]>([]);
   const [timerValue, setTimerValue] = useState<number>(0);
-  
-  function createPoll() {
+
+  useEffect((): void => {
+    async function getPollId(): Promise<void> {
+      try {
+        const pollIdResponse = await fetch(`/api/poll/createPoll`);
+        const pollIdData = await pollIdResponse.json() as { pollId: number };
+        setPollId(pollIdData.pollId);
+      }
+      catch (error) {
+        console.log(`Error when getting pollId: ${error}`);
+      }
+    }
+
+    getPollId().catch((error) => console.log(error));
+  }, [])
+
+  async function createPoll(): Promise<void> {
     const questionValue = ((document.getElementById('pollQuestion') as HTMLFormElement).value as string);
 
     if (questionValue.length === 0 || answers.length === 0) {
+      // Should do something to tell user they're missing stuff
       return;
     }
 
@@ -20,16 +36,23 @@ function Presenter() {
       answers 
     }
 
-    fetch(`/api/poll/startPoll${pollId}`, {
-      method: 'PATCH',
-      headers: {
-        'Content-Type': 'application/json'
-      },
-      body: JSON.stringify(fetchBody)
-    })
-      .then((response) => response.json())
-      .then((data) => console.log(data)) // Do something with the data, need to know what we are doing
-      .catch((err) => console.log(err));
+    try {
+      const createResponse = await fetch(`/api/poll/startPoll/${pollId}`, {
+        method: 'PATCH',
+        headers: {
+          'Content-Type': 'application/json'
+        },
+        body: JSON.stringify(fetchBody)
+      })
+
+      // Don't know what to do after creation yet
+      const createData = await createResponse.json() as unknown;
+      // Do something with the data?
+      console.log(createData);
+    }
+    catch (error) {
+      console.log(`Error occured in Presenter when trying to create new poll: ${error}`)
+    }
   }
 
   // Restricts timer so it will only take numbers
