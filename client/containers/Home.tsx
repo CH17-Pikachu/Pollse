@@ -1,18 +1,19 @@
-<<<<<<< HEAD
-
-=======
 import React from 'react';
 import { NavLink } from 'react-router-dom';
 
 function Home() {
   return (
     <div>
-      <NavLink to='/presenter'>Create Poll</NavLink>
-      <br />
-      <NavLink to='/audience'>Join Room</NavLink>
+      <div>
+        <img src='../assets/Pollse.png' alt='logo'/>
+      </div>
+      <div>
+        <NavLink className='presenter-btn' to='/presenter'>Create Poll</NavLink>
+        <br />
+        <NavLink className='audience-btn' to='/audience'>Join Room</NavLink>
+      </div>
     </div>
   );
 }
 
 export default Home;
->>>>>>> fe626c07aa1fa84c3702e51656c3b821fc68794b
