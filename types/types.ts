@@ -12,4 +12,13 @@ export enum LogType {
   NORMAL = 'NORMAL',
 }
 
+/**
+ * Presenter types
+ */
+export interface CreatePollRequestBody {
+  question: string;
+  timer: number;
+  answers: string[];
+}
+
 export default {};
