@@ -7,6 +7,7 @@ module.exports = {
   output: {
     path: path.join(__dirname, '/dist'), // the bundle output path
     filename: 'bundle.js', // the name of the bundle
+    publicPath: '/',
   },
   module: {
     rules: [
@@ -43,5 +44,6 @@ module.exports = {
     },
     port: 8080, // you can change the port
     hot: true,
+    historyApiFallback: true,
   },
 };
