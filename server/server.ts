@@ -22,7 +22,7 @@ app.use('/api/poll', pollRoute);
 app.use('/api/test', testRoute);
 
 // Serving the page
-app.get('/', (_req: Request, res: Response) => {
+app.get('/*', (_req: Request, res: Response) => {
   res.status(200).sendFile(path.resolve(__dirname, './client/index.html'));
 });
 
