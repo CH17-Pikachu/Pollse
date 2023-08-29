@@ -1,7 +1,9 @@
 import React, { useState } from 'react';
 
 interface FetchBody {
-  
+  question: string;
+  timer: number;
+  answers: string[];
 }
 
 function Presenter() {
@@ -10,8 +12,11 @@ function Presenter() {
   const [answers, setAnswers] = useState<string[]>([]);
   
   function createPoll() {
-    const fetchBody = {
-      question: (document.getElementById('pollQuestion') as HTMLFormElement).value,
+    const questionValue: string = (document.getElementById('pollQuestion') as HTMLFormElement).value;
+    const timerValue: number = (document.getElementById('pollTimer') as HTMLFormElement).value;
+    const fetchBody: FetchBody = {
+      question: questionValue,
+      timer: timerValue,
       answers 
     }
 
@@ -50,6 +55,10 @@ function Presenter() {
         <input type='text' id='pollQuestion' name='pollQuestion' placeholder='Question' />
       </label>
       <br />
+      <label htmlFor='pollTimer'>
+        Timer:
+        <input type='text' id='pollTimer' name='pollTimer' placeholder='Timer' />
+      </label>
       <form onSubmit={(e) => createNewAnswer(e)}>
         <label htmlFor='newAnswerInput'>
           New Answer:
