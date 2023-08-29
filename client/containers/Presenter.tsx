@@ -12,6 +12,7 @@ function Presenter() {
   const [answers, setAnswers] = useState<string[]>([]);
   
   function createPoll() {
+    // UNFINISHED, need to fix the type error stuff
     const questionValue: string = (document.getElementById('pollQuestion') as HTMLFormElement).value;
     const timerValue: number = (document.getElementById('pollTimer') as HTMLFormElement).value;
     const fetchBody: FetchBody = {
