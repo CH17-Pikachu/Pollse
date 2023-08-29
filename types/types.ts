@@ -15,10 +15,14 @@ export enum LogType {
 /**
  * Presenter types
  */
-export interface CreatePollRequestBody {
+export interface StartPollRequestBody {
   question: string;
   timer: number;
   answers: string[];
+}
+
+export interface CreatePollId {
+  pollId: number;
 }
 
 export default {};
