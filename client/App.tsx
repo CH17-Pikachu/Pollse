@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import './stylesheets/app.scss';
-import { BrowserRouter as Router, Route, Switch } from 'react-router-dom';
+import { BrowserRouter as Router, Route, Routes } from 'react-router-dom';
 import Audience from './containers/Audience';
 import AudienceResult from './containers/AudienceResults';
 import Home from './containers/Home';
@@ -28,13 +28,13 @@ function App() {
         </button>
       </div>
 
-      <Switch>
+      <Routes>
         <Route exact path='/' component={Home} />
         <Route path='/audience' component={Audience} />
         <Route path='/audience-results' component={AudienceResults} />
         <Route path='/presenter' component={Presenter} />
         <Route path='/presenter-results' component={PresenterResults} />
-      </Switch>
+      </Routes>
 
     </Router>
   );
