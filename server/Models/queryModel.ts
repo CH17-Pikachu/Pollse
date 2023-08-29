@@ -3,26 +3,15 @@
 import { Pool, QueryConfig, PoolConfig } from 'pg';
 import logger from '../logger';
 
-// interface DatabasePoolObject {
-//   connectionString: string;
-//   headers: {
-//     apiKey: string;
-//   };
-// }
-
-// host: db.kuvvxtevksxaomqbwycd.supabase.co
-// db name: postgres
-// port: 5432
-// user: postgres
-// password: !Pikachu-ctri17
+// PoolConfig calls for a number 'port', SUPABASE_PORT is a string env 
+const DB_PORT = parseInt(process.env.SUPABASE_PORT, 10);
 
 const poolObject: PoolConfig = {
-  connectionString: 'postgresql://postgres:[!Pikachu-ctri17]@db.kuvvxtevksxaomqbwycd.supabase.co:5432/postgres',
-  user: 'postgres',
-  database: 'postgres',
-  password: '!Pikachu-ctri17',
-  port: 5432,
-  host: 'db.kuvvxtevksxaomqbwycd.supabase.co'
+  user: process.env.SUPABASE_USER,
+  database: process.env.SUPABASE_DB_NAME,
+  password: process.env.SUPABASE_PASSWORD,
+  port: DB_PORT,
+  host: process.env.SUPABASE_HOST
 }
 
 const pool = new Pool(poolObject);
