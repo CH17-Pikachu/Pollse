@@ -1,15 +1,25 @@
 import React from 'react';
 import MCResults from '../components/MCResults';
 
-const props = {
+export interface PresenterProps {
+  presenterName: string;
+  pollTitle: string;
+  question: string;
+  questionType: string;
+  numOfResponses: number;
+}
+
+const mockProps: PresenterProps = {
   presenterName: 'Bob',
   pollTitle: 'Mood',
   question: 'How are you feeling today?',
   questionType: 'MC',
-  numOfResponses: '5',
+  numOfResponses: 5,
 };
 
 function PresenterResults() {
+  const props = mockProps;
+
   return (
     <div>
       <p>PresenterResults</p>

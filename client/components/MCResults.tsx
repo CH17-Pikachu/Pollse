@@ -1,4 +1,5 @@
 import React from 'react';
+import { PresenterProps } from '../containers/PresenterResults';
 
 // const mockData = {
 //   1: 'happy',
@@ -9,7 +10,7 @@ import React from 'react';
 
 //* This is to render multiple choice results
 
-function MCResults(props) {
+function MCResults(props: PresenterProps) {
   const { presenterName, pollTitle, question, questionType, numOfResponses } =
     props;
 
