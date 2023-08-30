@@ -19,7 +19,6 @@ function Audience() {
         // Fetch the questions and answers
         const response = await fetch(`/api/poll/questionsInPoll/${pollId}`);
         const data = (await response.json()).questions[0] as Question;
-        console.log(data);
         setQuestionObj(data);
         setQuestion(data.text);
         setAnswers(data.responseOptions as Response[]);
@@ -33,7 +32,6 @@ function Audience() {
   const postAnswers = async (checkedAnswer: number) => {
     const chosenResponse = answers.filter(el => el.responseId == checkedAnswer)[0]
     chosenResponse.questionId = questionObj.id;
-    console.log(chosenResponse);
     
     try {
       const response = await fetch(`/api/poll/newAnswers/${pollId}`, {

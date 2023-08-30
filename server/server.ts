@@ -16,11 +16,19 @@ const app = express();
 const server = createServer(app);
 const PORT = 3000;
 
-const io = new Server(server);
+const io = new Server(server,  {
+  cors: {
+    origin: ['http://localhost:8080'],
+  }
+});
 const pollRoute = pollRouteFactory(io);
 
 io.on('connection', socket => {
   logger('someone is here...', LogType.WARNING);
+  socket.on('join', (room: string)=>{
+    console.log('attempting to join room ', room);
+    return socket.join(room)
+  })
 });
 
 app.use(express.json());

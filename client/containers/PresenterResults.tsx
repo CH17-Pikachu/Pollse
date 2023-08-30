@@ -31,9 +31,9 @@ function PresenterResults() {
       <h3>Results</h3>
       <h4>Presenter View</h4>
       <MCResults />
-      <button type='button' onClick={closePoll}>
+      {/* <button type='button' onClick={closePoll}>
         Close Poll
-      </button>
+      </button> */}
     </div>
   );
 }

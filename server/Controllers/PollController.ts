@@ -259,13 +259,13 @@ const createPollController = (io: Server) => {
           pollError(
             'recordResponses',
             'unsupported feature',
-            'please include responseId',
+            'please include responseId',  
           ),
         );
       }
 
       // emit response on websocket room with roomId in route params
-      io.to(roomCode.toString()).emit(JSON.stringify(response));
+      io.to(roomCode.toString()).emit(roomCode.toString(), JSON.stringify(response));
     },
   };
   return pollController;

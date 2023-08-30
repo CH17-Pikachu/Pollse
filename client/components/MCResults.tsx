@@ -11,10 +11,14 @@ import {
   Legend,
 } from 'chart.js';
 import { Bar } from 'react-chartjs-2';
+import { io } from 'socket.io-client';
 import { Question, Response } from '../../types/types';
 
+
+const socket = io('http://localhost:3000');
+
 // import websocket
-//! import { socket } from '../socket';
+// import { socket } from '../socket';
 // const mockData = {
 //   1: 'happy',
 //   2: 'content',
@@ -34,6 +38,7 @@ ChartJS.register(
 //* This is to render multiple choice results
 function MCResults() {
   const { pollId } = useParams();
+  const [questionHasBeenUpdated, setQuestionHasBeenUpdated] = useState(false);
   const [question, setQuestion] = useState<Question>({
     id: 1,
     text: 'question1',
@@ -52,32 +57,57 @@ function MCResults() {
     ],
   });
 
-  //! const [isConnected, setIsConnected] = useState(socket.connected);
-  //! const [pollEvents, setPollEvents] = useState([]);
+  const [isConnected, setIsConnected] = useState(socket.connected);
+  // ! const [pollEvents, setPollEvents] = useState([]);
 
-  // useEffect(() => {
-  //   function onConnect() {
-  //     setIsConnected(true);
-  //   }
 
-  //   function onDisconnect() {
-  //     setIsConnected(false);
-  //   }
+  useEffect(() => {
 
-  //   function onPollEvent(value) {
-  //     // setPollEvents();
-  //   }
+    if (!questionHasBeenUpdated) {
+      fetch(`/api/poll/questionsInPoll/${pollId}`)
+        .then(response => response.json())
+        .then(data => setQuestion(data.questions[0]))
+        .catch(error => console.log(error));
 
-  //   socket.on('connect', onConnect);
-  //   socket.on('disconnect', onDisconnect);
-  //   socket.on('poll', onPollEvent);
+      setQuestionHasBeenUpdated(true);
+    }
 
-  //   return () => {
-  //     socket.off('connect', onConnect);
-  //     socket.off('disconnect', onDisconnect);
-  //     socket.off('poll', onPollEvent);
-  //   };
-  // }, []);
+    function onConnect() {
+      setIsConnected(true)
+      socket.emit('join', pollId)
+      console.log('websocket connected to room ', pollId);
+    }
+    
+    function onDisconnect() {
+      setIsConnected(false);
+      console.log('websocket disconnected');
+    }
+
+    socket.on('connect', onConnect);
+    socket.on('disconnect', onDisconnect);
+
+    return () => {
+      socket.off('connect', onConnect);
+      socket.off('disconnect', onDisconnect);
+      // socket.off('poll', onPollEvent);
+    };
+  }, []);
+
+  useEffect(() => {
+    function updateResponseCount(response: any) {
+      const parsedResponse = JSON.parse(response) as Response;
+      const copyQuestion = structuredClone(question);
+      const foundResponse = (copyQuestion.responseOptions as Response[]).find((el) => el.responseId == parsedResponse.responseId)
+      foundResponse.count += 1;
+      setQuestion(copyQuestion);
+    }
+
+    socket.on(pollId.toString(), updateResponseCount);
+
+    return () => {
+      socket.off(pollId.toString(), updateResponseCount)
+    }
+  }, [question])
 
   const options = {
     indexAxis: 'y' as const,
@@ -139,6 +169,7 @@ function MCResults() {
 
   return (
     <div className='MC-results'>
+      <h3>Poll: {pollId}</h3>
       <h3>Question: {question.text}</h3>
 
       <Bar options={options} data={data} />
