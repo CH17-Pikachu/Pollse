@@ -13,7 +13,7 @@ import { Bar } from 'react-chartjs-2';
 // import presenter types
 import { PresenterProps } from '../containers/PresenterResults';
 // import websocket
-import { socket } from '../socket';
+//! import { socket } from '../socket';
 // const mockData = {
 //   1: 'happy',
 //   2: 'content',
@@ -35,32 +35,32 @@ function MCResults(props: PresenterProps) {
   const { presenterName, pollTitle, question, questionType, responseOptions } =
     props;
 
-  const [isConnected, setIsConnected] = useState(socket.connected);
+  //! const [isConnected, setIsConnected] = useState(socket.connected);
   const [pollEvents, setPollEvents] = useState([]);
 
-  useEffect(() => {
-    function onConnect() {
-      setIsConnected(true);
-    }
+  // useEffect(() => {
+  //   function onConnect() {
+  //     setIsConnected(true);
+  //   }
 
-    function onDisconnect() {
-      setIsConnected(false);
-    }
+  //   function onDisconnect() {
+  //     setIsConnected(false);
+  //   }
 
-    function onPollEvent(value) {
-      // setPollEvents();
-    }
+  //   function onPollEvent(value) {
+  //     // setPollEvents();
+  //   }
 
-    socket.on('connect', onConnect);
-    socket.on('disconnect', onDisconnect);
-    socket.on('poll', onPollEvent);
+  //   socket.on('connect', onConnect);
+  //   socket.on('disconnect', onDisconnect);
+  //   socket.on('poll', onPollEvent);
 
-    return () => {
-      socket.off('connect', onConnect);
-      socket.off('disconnect', onDisconnect);
-      socket.off('poll', onPollEvent);
-    };
-  }, []);
+  //   return () => {
+  //     socket.off('connect', onConnect);
+  //     socket.off('disconnect', onDisconnect);
+  //     socket.off('poll', onPollEvent);
+  //   };
+  // }, []);
 
   const options = {
     indexAxis: 'y' as const,

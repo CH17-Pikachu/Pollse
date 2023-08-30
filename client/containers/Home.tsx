@@ -14,7 +14,7 @@ function Home() {
   return (
     <div>
       <div>
-        <img src='../assets/Pollse.png' alt='logo' />
+        <img src='../assets/Pollse_Logo.png' alt='logo' />
       </div>
       <div>
         <NavLink className='presenter-btn' to='/presenter'>

@@ -1,7 +1,11 @@
 import React, { useState, useEffect } from 'react';
+import { useNavigate } from 'react-router-dom';
 import { StartPollRequestBody, CreatePollId } from '../../types/types';
+import NavBar from '../components/NavBar';
 
 function Presenter() {
+  const navigate = useNavigate();
+
   // Will have pollId gotten from backend and passed in?
   const [pollId, setPollId] = useState<number | null>(null);
   const [answers, setAnswers] = useState<string[]>([]);
@@ -55,6 +59,7 @@ function Presenter() {
         `Error occured in Presenter when trying to create new poll: ${error}`,
       );
     }
+    navigate('/presenter-results');
   }
 
   // Restricts timer so it will only take numbers
@@ -90,6 +95,7 @@ function Presenter() {
 
   return (
     <div>
+      <NavBar />
       <p>Room ID:{pollId}</p>
       <label htmlFor='pollQuestion'>
         Question:

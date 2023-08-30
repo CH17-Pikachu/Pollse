@@ -1,5 +1,6 @@
 import React from 'react';
 import MCResults from '../components/MCResults';
+import NavBar from '../components/NavBar';
 
 export interface PresenterProps {
   presenterName: string;
@@ -20,8 +21,13 @@ const mockProps: PresenterProps = {
 function PresenterResults() {
   const props = mockProps;
 
+  const closePoll = () => {
+    // this need to do socket.disconnet()
+  };
+
   return (
     <div>
+      <NavBar />
       <h3>Results</h3>
       <h4>Presenter View</h4>
       <MCResults
@@ -31,7 +37,9 @@ function PresenterResults() {
         questionType={props.questionType}
         responseOptions={props.responseOptions}
       />
-      <button>Close Poll</button>
+      <button type='button' onClick={closePoll}>
+        Close Poll
+      </button>
     </div>
   );
 }
