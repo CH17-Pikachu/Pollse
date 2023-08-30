@@ -11,10 +11,10 @@ function App() {
   return (
     <BrowserRouter>
       <Routes>
-        <Route path='/audience' element={<Audience />} />
+        <Route path='/audience/:pollId' element={<Audience />} />
         <Route path='/audience-results' element={<AudienceResult />} />
         <Route path='/presenter' element={<Presenter />} />
-        <Route path='/presenter-results' element={<PresenterResult />} />
+        <Route path='/presenter-results/:room' element={<PresenterResult />} />
         <Route path='/' element={<Home />} />
       </Routes>
     </BrowserRouter>

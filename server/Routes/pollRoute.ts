@@ -12,7 +12,7 @@ const router = express.Router();
  * Responds with new room code
  */
 router.get('/createPoll', PollController.createPoll, (req, res) => {
-  res.send(200);
+  res.sendStatus(200);
 });
 
 /**
@@ -28,7 +28,7 @@ router.patch(
   PollController.setLifetime,
   PollController.startPoll,
   (req, res) => {
-    res.send(200);
+    res.sendStatus(200);
   },
 );
 
@@ -37,7 +37,7 @@ router.patch(
  * This will be where we add functionality to save poll results to a presenter
  */
 router.patch('/endPoll/:roomCode', PollController.stopPoll, (req, res) => {
-  res.send(200);
+  res.sendStatus(200);
 });
 
 /**
@@ -48,7 +48,8 @@ router.get(
   '/questionsInPoll/:roomCode',
   PollController.getQuestionsInPoll,
   (req, res) => {
-    res.send(200);
+    // [questionid: {text, qtype, ?[answers]}]
+    res.sendStatus(200);
   },
 );
 
@@ -61,7 +62,7 @@ router.post(
   PollController.checkOpen,
   PollController.recordResponses,
   (req, res) => {
-    res.send(200);
+    res.sendStatus(200);
   },
 );
 
