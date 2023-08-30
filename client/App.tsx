@@ -12,7 +12,7 @@ function App() {
     <BrowserRouter>
       <Routes>
         <Route path='/audience/:pollId' element={<Audience />} />
-        <Route path='/audience-results' element={<AudienceResults />} />
+        <Route path='/audience-results/:pollId' element={<AudienceResults />} />
         <Route path='/presenter' element={<Presenter />} />
         <Route
           path='/presenter-results/:pollId'

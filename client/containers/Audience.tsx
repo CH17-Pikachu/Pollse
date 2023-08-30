@@ -7,6 +7,7 @@ function Audience() {
   const navigate = useNavigate();
 
   const { pollId } = useParams();
+  const [questionObj, setQuestionObj] = useState<Question>()
   const [question, setQuestion] = useState(pollId);
   const [answers, setAnswers] = useState<Response[]>([
     { questionId: 0, text: 'question', count: 1 },
@@ -17,7 +18,9 @@ function Audience() {
       try {
         // Fetch the questions and answers
         const response = await fetch(`/api/poll/questionsInPoll/${pollId}`);
-        const data = (await response.json()) as Question;
+        const data = (await response.json()).questions[0] as Question;
+        console.log(data);
+        setQuestionObj(data);
         setQuestion(data.text);
         setAnswers(data.responseOptions as Response[]);
       } catch (error) {
@@ -27,14 +30,18 @@ function Audience() {
     getQuestion().catch(error => console.log(error));
   }, []);
 
-  const postAnswers = async (checkedAnswers: string[]) => {
+  const postAnswers = async (checkedAnswer: number) => {
+    const chosenResponse = answers.filter(el => el.responseId == checkedAnswer)[0]
+    chosenResponse.questionId = questionObj.id;
+    console.log(chosenResponse);
+    
     try {
       const response = await fetch(`/api/poll/newAnswers/${pollId}`, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
         },
-        body: JSON.stringify({ answers: checkedAnswers }),
+        body: JSON.stringify({ response: chosenResponse }),
       });
 
       if (response.status === 200) {
@@ -47,28 +54,29 @@ function Audience() {
     } catch (error) {
       console.error(`Error when submitting answers: ${error}`);
     }
+    
   };
 
   const handleSubmitData = (e: React.FormEvent) => {
     e.preventDefault();
-    const checkedAnswers: string[] = [];
+    let checkedAnswer: number = 0;
     const givenAnswers: HTMLInputElement[] = // @ts-ignore
     e.target.elements as HTMLInputElement[];
 
     for (let i = 0; i < givenAnswers.length; i += 1) {
       if (givenAnswers[i].checked) {
-        checkedAnswers.push(givenAnswers[i].value);
+        checkedAnswer = givenAnswers[i].id as unknown as number;
       }
     }
 
-    postAnswers(checkedAnswers).catch(error => console.log(error));
+    postAnswers(checkedAnswer).catch(error => console.log(error));
   };
 
   const answersList: React.JSX.Element[] = [];
   answers.forEach(ans => {
     answersList.push(
       <div>
-        <input type='checkbox' id={ans.text} name={ans.text} value={ans.text} />
+        <input type='radio' id={ans.responseId as unknown as string} name={question} value={ans.text} />
         <label htmlFor={ans.text}>{ans.text}</label>
         <br />
       </div>,
@@ -77,6 +85,7 @@ function Audience() {
 
   return (
     <div>
+      <NavBar />
       <div className='question-container'>
         <h2>{question}</h2>
         <form
