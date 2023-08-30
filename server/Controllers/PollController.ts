@@ -7,7 +7,7 @@ import { createError } from '../utils';
 const pollError = (method: string, type: string, err: unknown) =>
   createError('PollController', method, type, err);
 
-interface PollController {
+export interface PollController {
   /**
    * Creates an empty poll with no questions and default lifetime
    * Adds new room code to res.locals
@@ -95,9 +95,20 @@ interface PollController {
 }
 
 const pollController: PollController = {
-  createPoll: (req, res, next) => next(),
+  createPoll: (req, res, next) => {
+    // query database to create new Poll
+    // add Poll ID (room code) to res.locals
+    res.locals.pollId = null;
+    return next();
+  },
 
-  populateQuestions: (req, res, next) => next(),
+  populateQuestions: (req, res, next) => {
+    const { roomCode } = req.params;
+    const { questions } = req.body;
+    // query database to create new questions tied to room
+    // if a question has an answers array, query to create answers
+    return next();
+  },
 
   setLifetime: (req, res, next) => next(),
 
