@@ -1,4 +1,4 @@
-import request from 'supertest';
+// import request from 'supertest';
 
 // Make sure you are running the server
 const server = 'http://localhost:3000';
