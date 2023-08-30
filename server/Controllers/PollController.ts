@@ -1,6 +1,7 @@
 /**
  * Handles interactions with poll data
  */
+import { query } from 'express';
 import { createError } from '../utils';
 import { PollController, Question, QuestionType } from '../../types/types';
 import pool from '../Models/queryModel';
@@ -24,13 +25,15 @@ const pollController: PollController = {
     const pollQuery = {
       text: `
       INSERT INTO "Polls" (presenter_id)
-      VALUES (${presenter_id})
+      VALUES ($1)
       RETURNING poll_id;
       `,
     };
 
+    const pollVal = [presenter_id];
+
     pool
-      .query<{ poll_id: number }>(pollQuery)
+      .query<{ poll_id: number }, string | QuestionType>(pollQuery, pollVal)
       .then(queryResponse => {
         if (queryResponse.rows.length === 0)
           throw Error('did not receive id back from createPoll');
@@ -136,7 +139,14 @@ const pollController: PollController = {
       );
     // query db to flip poll isOpen boolean
     const queryText = `
-    `;
+    UPDATE "Polls" SET is_open = true WHERE poll_id = $1;`;
+    const vals = [roomCode];
+    pool
+      .query(queryText, vals)
+      .then(() => next())
+      .catch(err =>
+        next(pollError('startPoll', 'db comm error when starting poll', err)),
+      );
   },
 
   stopPoll: (req, res, next) => next(),
