@@ -21,7 +21,7 @@ const poolObject: PoolConfig = {
 const pool = new Pool(poolObject);
 
 export default {
-  query: <K, T>(queryConfig: string | QueryConfig, values?: T[]) => {
+  query: <K, T = never>(queryConfig: string | QueryConfig, values?: T[]) => {
     logger(
       `Executed query: ${
         typeof queryConfig === 'string' ? queryConfig : queryConfig.text

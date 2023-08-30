@@ -1,6 +1,7 @@
 /**
  * Handles interactions with poll data
  */
+import { query } from 'express';
 import { createError } from '../utils';
 import { PollController, Question, QuestionType } from '../../types/types';
 import pool from '../Models/queryModel';
@@ -24,13 +25,15 @@ const pollController: PollController = {
     const pollQuery = {
       text: `
       INSERT INTO "Polls" (presenter_id)
-        VALUES (${presenter_id})
+      VALUES ($1)
       RETURNING poll_id;
       `,
     };
 
+    const pollVal = [presenter_id];
+
     pool
-      .query<{ poll_id: number }>(pollQuery)
+      .query<{ poll_id: number }, string | QuestionType>(pollQuery, pollVal)
       .then(queryResponse => {
         if (queryResponse.rows.length === 0)
           throw Error('did not receive id back from createPoll');
@@ -81,17 +84,19 @@ const pollController: PollController = {
         // we have our question in the db, and we have its id, so lets do answers
         if (question.responseOptions) {
           // build query
-          let responseOptionsQueryText = ``;
+          let responseOptionsQueryText = `INSERT INTO "Responses" (question_id, response_text)
+          VALUES`;
           const vars: string[] = [];
           // iterate through each responseOption
           // i is 1-indexed bc sql is dumb
           for (let i = 1; i <= question.responseOptions.length; i += 1) {
             const response = question.responseOptions[i - 1];
             responseOptionsQueryText += `
-              INSERT INTO "Responses" (question_id, response_text)
-              VALUES (${question.id}, $${i});`;
+               (${question.id}, $${i}),`;
             vars.push(typeof response === 'string' ? response : response.text);
           }
+          responseOptionsQueryText = responseOptionsQueryText.slice(0, -1);
+          responseOptionsQueryText += ';';
           pool
             .query(responseOptionsQueryText, vars)
             .then(() => next())
@@ -115,8 +120,6 @@ const pollController: PollController = {
           ),
         ),
       );
-
-    return next();
   },
 
   // Stretch
@@ -124,7 +127,26 @@ const pollController: PollController = {
 
   startPoll: (req, res, next) => {
     // flip the boolean in the poll at the roomcode
-    const { roomCode } = req.params;
+    const { roomCode: roomString } = req.params;
+    const roomCode = parseInt(roomString, 10);
+    if (!roomCode)
+      return next(
+        pollError(
+          'startPoll',
+          'invalid room code',
+          'couldnt parse room code to integer',
+        ),
+      );
+    // query db to flip poll isOpen boolean
+    const queryText = `
+    UPDATE "Polls" SET is_open = true WHERE poll_id = $1;`;
+    const vals = [roomCode];
+    pool
+      .query(queryText, vals)
+      .then(() => next())
+      .catch(err =>
+        next(pollError('startPoll', 'db comm error when starting poll', err)),
+      );
   },
 
   stopPoll: (req, res, next) => next(),
@@ -136,7 +158,7 @@ const pollController: PollController = {
 
   recordResponses: (req, res, next) => {
     const { roomCode } = req.params;
-    const { response }: { response: Response } = req.body;
+    const { response } = req.body as { response: Response };
     // write response to db
 
     // emit response on websocket room with roomId in route params
