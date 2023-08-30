@@ -32,7 +32,7 @@ router.get(
 router.patch(
   '/startPoll/:roomCode',
   PollController.populateQuestions,
-  PollController.setLifetime,
+  PollController.setLifetime, // TODO this is stretch goal
   PollController.startPoll,
   (req, res) => {
     res.sendStatus(200);

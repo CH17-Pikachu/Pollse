@@ -46,7 +46,7 @@ export interface Question {
   id?: number;
   text: string;
   type: QuestionType;
-  responseOptions?: [Response] | [string];
+  responseOptions?: Response[] | string[];
 }
 
 export interface Response {
