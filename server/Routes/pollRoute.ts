@@ -17,7 +17,8 @@ router.get(
   UserController.createPresenter,
   PollController.createPoll,
   (req, res) => {
-    res.status(200).json(res.locals.roomCode);
+    const { poll_id } = res.locals as { poll_id: number };
+    res.status(200).json({ roomCode: poll_id });
   },
 );
 

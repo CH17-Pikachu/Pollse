@@ -33,13 +33,11 @@ const pollController: PollController = {
       .then(queryResponse => {
         if (queryResponse.rows.length === 0)
           throw Error('did not receive id back from createPoll');
+        // add Poll ID (room code) to res.locals
         res.locals.poll_id = queryResponse.rows[0].poll_id;
         return next();
       })
       .catch(err => next(pollError('createPoll', 'db communication', err)));
-    // add Poll ID (room code) to res.locals
-    res.locals.roomCode = null;
-    return next();
   },
 
   populateQuestions: (req, res, next) => {
@@ -54,8 +52,15 @@ const pollController: PollController = {
         ),
       );
     // query database to create new questions tied to room
-    const queryText = `INSERT INTO Questions`;
-    pool.query(queryText);
+    // TODO start here
+    // const questionQueryText = `INSERT INTO Questions `;
+    // if (question.responseOptions) {
+    //   let responseOptionsQueryText = ``;
+    //   for (let i = 1; i <= question.responseOptions.length; i++) {
+    //     responseOptionsQueryText+=`INSERT INTO Answers `
+    //   }
+    // }
+    // pool.query(queryText);
     // if a question has an answers array, query to create answers
     return next();
   },
