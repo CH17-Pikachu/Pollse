@@ -3,11 +3,12 @@
  */
 import { RequestHandler } from 'express';
 import { createError } from '../utils';
+import { Question } from '../../types/types';
 
 const pollError = (method: string, type: string, err: unknown) =>
   createError('PollController', method, type, err);
 
-interface PollController {
+export interface PollController {
   /**
    * Creates an empty poll with no questions and default lifetime
    * Adds new room code to res.locals
@@ -95,10 +96,22 @@ interface PollController {
 }
 
 const pollController: PollController = {
-  createPoll: (req, res, next) => next(),
+  createPoll: (req, res, next) => {
+    // query database to create new Poll
+    // add Poll ID (room code) to res.locals
+    res.locals.pollId = null;
+    return next();
+  },
 
-  populateQuestions: (req, res, next) => next(),
+  populateQuestions: (req, res, next) => {
+    const { roomCode } = req.params;
+    const { question }: { question: Question } = req.body;
+    // query database to create new questions tied to room
+    // if a question has an answers array, query to create answers
+    return next();
+  },
 
+  // Stretch
   setLifetime: (req, res, next) => next(),
 
   startPoll: (req, res, next) => next(),
@@ -107,9 +120,15 @@ const pollController: PollController = {
 
   getQuestionsInPoll: (req, res, next) => next(),
 
+  // stretch
   checkOpen: (req, res, next) => next(),
 
-  recordResponses: (req, res, next) => next(),
+  recordResponses: (req, res, next) => {
+    // write response to db
+    // emit response on websocket room with roomId in route params
+    // io.to(roomCode).emit(responseDetails);
+    // client side: io.on('connection', (socket)=> {socket.join(roomCode)})
+  },
 };
 
 export default pollController;
