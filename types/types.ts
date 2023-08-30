@@ -31,13 +31,11 @@ export enum QuestionType {
 }
 
 export interface Question {
-  id: number;
+  id?: number;
   text: string;
   type: QuestionType;
-  answers?: [Answer];
+  responseOptions?: [string]; // presenter answers; not audience responses
 }
-
-type Answer = string;
 
 export default {};
 
