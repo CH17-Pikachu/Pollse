@@ -12,7 +12,7 @@ export const createError = (
   type: string,
   err: unknown,
 ) => ({
-  log: `${controller}.${method} ${type}: ERROR: ${err}`,
+  log: `${controller}.${method} ${type}: ERROR: ${JSON.stringify(err)}`,
   message: {
     err: `Error occurred in ${controller}.${method}. Check server logs for more details.`,
   },

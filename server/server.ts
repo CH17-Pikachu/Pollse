@@ -1,8 +1,10 @@
 import * as dotenv from 'dotenv';
 import express, { Request, Response, NextFunction } from 'express';
+import { createServer } from 'http';
+import { Server } from 'socket.io';
 import path from 'path';
 // import routes
-import pollRoute from './Routes/pollRoute';
+import pollRouteFactory from './Routes/pollRoute';
 import testRoute from './Routes/testRoute';
 import logger from './logger';
 import { LogType } from '../types/types';
@@ -11,7 +13,15 @@ import { LogType } from '../types/types';
 dotenv.config();
 
 const app = express();
+const server = createServer(app);
 const PORT = 3000;
+
+const io = new Server(server);
+const pollRoute = pollRouteFactory(io);
+
+io.on('connection', socket => {
+  logger('someone is here...', LogType.WARNING);
+});
 
 app.use(express.json());
 app.use(express.urlencoded());
@@ -56,7 +66,7 @@ app.use(
 );
 
 // Begins listening to port 3000
-app.listen(PORT, () => {
+server.listen(PORT, () => {
   logger(`Server listening on port: ${PORT}...`, LogType.SUCCESS);
 });
 
