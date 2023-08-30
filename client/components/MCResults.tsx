@@ -14,7 +14,7 @@ import { Bar } from 'react-chartjs-2';
 import { Question, Response } from '../../types/types';
 
 // import websocket
-//! import { socket } from '../socket';
+// import { socket } from '../socket';
 // const mockData = {
 //   1: 'happy',
 //   2: 'content',
@@ -34,6 +34,7 @@ ChartJS.register(
 //* This is to render multiple choice results
 function MCResults() {
   const { pollId } = useParams();
+  const [questionHasBeenUpdated, setQuestionHasBeenUpdated] = useState(false);
   const [question, setQuestion] = useState<Question>({
     id: 1,
     text: 'question1',
@@ -51,33 +52,41 @@ function MCResults() {
       },
     ],
   });
+// 
+  // ! const [isConnected, setIsConnected] = useState(socket.connected);
+  // ! const [pollEvents, setPollEvents] = useState([]);
 
-  //! const [isConnected, setIsConnected] = useState(socket.connected);
-  //! const [pollEvents, setPollEvents] = useState([]);
+  useEffect(() => {
+    if (!questionHasBeenUpdated) {
+      fetch(`/api/poll/questionsInPoll/${pollId}`)
+        .then(response => response.json())
+        .then(data => setQuestion(data.questions[0]))
+        .catch(error => console.log(error));
 
-  // useEffect(() => {
-  //   function onConnect() {
-  //     setIsConnected(true);
-  //   }
+      setQuestionHasBeenUpdated(true);
+    }
+    // function onConnect() {
+    //   setIsConnected(true);
+    // }
 
-  //   function onDisconnect() {
-  //     setIsConnected(false);
-  //   }
+    // function onDisconnect() {
+    //   setIsConnected(false);
+    // }
 
-  //   function onPollEvent(value) {
-  //     // setPollEvents();
-  //   }
+    // function onPollEvent(value) {
+    //   // setPollEvents();
+    // }
 
-  //   socket.on('connect', onConnect);
-  //   socket.on('disconnect', onDisconnect);
-  //   socket.on('poll', onPollEvent);
+    // socket.on('connect', onConnect);
+    // socket.on('disconnect', onDisconnect);
+    // socket.on('poll', onPollEvent);
 
-  //   return () => {
-  //     socket.off('connect', onConnect);
-  //     socket.off('disconnect', onDisconnect);
-  //     socket.off('poll', onPollEvent);
-  //   };
-  // }, []);
+    // return () => {
+    //   socket.off('connect', onConnect);
+    //   socket.off('disconnect', onDisconnect);
+    //   socket.off('poll', onPollEvent);
+    // };
+  }, []);
 
   const options = {
     indexAxis: 'y' as const,
