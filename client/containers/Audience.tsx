@@ -17,7 +17,8 @@ function Audience() {
       try {
         // Fetch the questions and answers
         const response = await fetch(`/api/poll/questionsInPoll/${pollId}`);
-        const data = (await response.json()) as Question;
+        const data = (await response.json()).questions[0] as Question;
+        console.log(data);
         setQuestion(data.text);
         setAnswers(data.responseOptions as Response[]);
       } catch (error) {
@@ -77,6 +78,7 @@ function Audience() {
 
   return (
     <div>
+      <NavBar />
       <div className='question-container'>
         <h2>{question}</h2>
         <form
