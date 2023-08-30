@@ -1,11 +1,5 @@
 import React, { useState, useEffect } from 'react';
-<<<<<<< HEAD
-import { useNavigate } from 'react-router-dom';
-import { StartPollRequestBody, CreatePollId } from '../../types/types';
-import NavBar from '../components/NavBar';
-=======
 import { Question, CreatePollId, QuestionType } from '../../types/types';
->>>>>>> dev
 
 function Presenter() {
   const navigate = useNavigate();
@@ -39,19 +33,11 @@ function Presenter() {
       return;
     }
 
-<<<<<<< HEAD
-    const fetchBody: StartPollRequestBody = {
-      question: questionValue,
-      timer: timerValue,
-      answers,
-    };
-=======
     const fetchBody: Question = {
       text: questionValue,
       type: QuestionType.MULTIPLE_CHOICE,
-      responseOptions: answers
-    }
->>>>>>> dev
+      responseOptions: answers,
+    };
 
     try {
       const createResponse = await fetch(`/api/poll/startPoll/${pollId}`, {
