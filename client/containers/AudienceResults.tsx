@@ -1,5 +1,5 @@
 import React from 'react';
-import MCResults from '../components/MCResults';
+// import MCResults from '../components/MCResults';
 import NavBar from '../components/NavBar';
 
 function AudienceResults() {

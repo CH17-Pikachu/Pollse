@@ -14,7 +14,10 @@ function App() {
         <Route path='/audience/:pollId' element={<Audience />} />
         <Route path='/audience-results' element={<AudienceResults />} />
         <Route path='/presenter' element={<Presenter />} />
-        <Route path='/presenter-results/:room' element={<PresenterResults />} />
+        <Route
+          path='/presenter-results/:pollId'
+          element={<PresenterResults />}
+        />
         <Route path='/' element={<Home />} />
       </Routes>
     </BrowserRouter>

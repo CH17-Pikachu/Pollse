@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
+import { useNavigate } from 'react-router-dom';
 import { Question, QuestionType } from '../../types/types';
 import NavBar from '../components/NavBar';
-import PresenterResults from './PresenterResults';
 
 function Presenter() {
   const navigate = useNavigate();
@@ -52,16 +52,18 @@ function Presenter() {
         body: JSON.stringify({ question: fetchBody }),
       });
 
-      // Don't know what to do after creation yet
-      const createData = (await createResponse.json()) as unknown;
-      // Do something with the data?
-      console.log(createData);
+      if (createResponse.status === 200) {
+        navigate(`/presenter-results/${pollId}`, {
+          state: { question: 'test' },
+        });
+      } else {
+        console.log('could not create poll');
+      }
     } catch (error) {
       console.log(
         `Error occured in Presenter when trying to create new poll: ${error}`,
       );
     }
-    navigate('/presenter-results');
   }
 
   // Restricts timer so it will only take numbers
@@ -137,8 +139,6 @@ function Presenter() {
       </button>
       <p>Answers:</p>
       {answersElements}
-
-      <PresenterResults pollId={pollId} />
     </div>
   );
 }

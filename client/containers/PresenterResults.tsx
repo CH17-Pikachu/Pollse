@@ -1,5 +1,6 @@
 import React from 'react';
-import MCResults from '../components/MCResults';
+import { useParams, useLocation } from 'react-router-dom';
+// import MCResults from '../components/MCResults';
 import NavBar from '../components/NavBar';
 
 // export interface PresenterProps {
@@ -18,8 +19,11 @@ import NavBar from '../components/NavBar';
 //   responseOptions: ['happy', 'hungry', 'sad', 'excited'],
 // };
 
-function PresenterResults(props) {
+function PresenterResults() {
   // const props = mockProps;
+  const location = useLocation();
+  const { question } = location.state;
+  const { pollId } = useParams();
 
   const closePoll = () => {
     // this need to do socket.disconnet()
@@ -30,13 +34,12 @@ function PresenterResults(props) {
       <NavBar />
       <h3>Results</h3>
       <h4>Presenter View</h4>
-      <MCResults
-        presenterName={props.presenterName}
-        pollId={props.pollId}
-        question={props.question}
-        questionType={props.questionType}
-        responseOptions={props.responseOptions}
-      />
+      {/* <MCResults
+        pollId={pollId}
+        // question={props.question}
+        // questionType={props.questionType}
+        // responseOptions={props.responseOptions}
+      /> */}
       <button type='button' onClick={closePoll}>
         Close Poll
       </button>

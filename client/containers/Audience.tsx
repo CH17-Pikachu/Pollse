@@ -52,9 +52,8 @@ function Audience() {
   const handleSubmitData = (e: React.FormEvent) => {
     e.preventDefault();
     const checkedAnswers: string[] = [];
-    // @ts-ignore
-    const givenAnswers: HTMLInputElement[] = e.target
-      .elements as HTMLInputElement[];
+    const givenAnswers: HTMLInputElement[] = // @ts-ignore
+    e.target.elements as HTMLInputElement[];
 
     for (let i = 0; i < givenAnswers.length; i += 1) {
       if (givenAnswers[i].checked) {
