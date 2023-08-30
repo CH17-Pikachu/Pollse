@@ -64,7 +64,7 @@ router.get(
   PollController.getQuestionsInPoll,
   (req, res) => {
     const { questions } = res.locals as { questions: Question[] };
-    res.status(200).json({ questions: res.locals.questions });
+    res.status(200).json({ questions });
   },
 );
 

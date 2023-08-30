@@ -1,7 +1,6 @@
 /**
  * Handles interactions with poll data
  */
-import { query } from 'express';
 import { createError } from '../utils';
 import {
   PollController,
@@ -66,7 +65,7 @@ const pollController: PollController = {
   },
 
   populateQuestions: (req, res, next) => {
-    const { roomCode } = res.locals;
+    const { roomCode } = res.locals as { roomCode: number };
     const { question } = req.body as { question: Question };
     if (!question)
       return next(
@@ -171,7 +170,7 @@ const pollController: PollController = {
     const { roomCode } = res.locals;
     const queryText = `
       SELECT q.question_id, q.question_text, q.question_type, 
-        JSON_AGG (ROW_TO_JSON( (r.response_text, r.count))) responses
+        JSON_AGG (ROW_TO_JSON( (r.response_text, r.count, r.response_id))) responses
       FROM "Questions" AS "q" 
         INNER JOIN "Responses" as "r" USING (question_id)
       WHERE q.poll_id = ${roomCode}
@@ -182,7 +181,7 @@ const pollController: PollController = {
         question_id: number;
         question_text: string;
         question_type: QuestionType;
-        responses: { f1: string; f2: number }[];
+        responses: { f1: string; f2: number; f3: number }[];
       }>(queryText)
       .then(result => {
         const questions = result.rows;
@@ -192,6 +191,7 @@ const pollController: PollController = {
         const responses: Response[] = [];
         for (let i = 0; i < question.responses.length; i += 1) {
           responses.push({
+            responseId: question.responses[i].f3,
             count: question.responses[i].f2,
             text: question.responses[i].f1,
           });
@@ -224,12 +224,44 @@ const pollController: PollController = {
   recordResponses: (req, res, next) => {
     const { roomCode } = res.locals;
     const { response } = req.body as { response: Response };
+    if (!response.questionId)
+      return next(
+        pollError(
+          'recordResponses',
+          'user input error',
+          'response missing qid',
+        ),
+      );
     // write response to db
+    if (response.responseId) {
+      // if frontend knows about the id, then this is a mc response. increment count
+      const mcResponseQuery = `
+        UPDATE "Responses"
+        SET count = count + 1
+        WHERE response_id = $1;
+      `;
+      const queryResId = [response.responseId];
+      pool
+        .query(mcResponseQuery, queryResId)
+        .then(() => next()) // this is where we put our websocket event
+        .catch(err =>
+          next(pollError('recordResponse', 'couldnt update mcresponse', err)),
+        );
+    } else {
+      // frontend doesn't know about the id, this is a sr, insert new record
+      // TODO short response path is not mvp
+      // const srResponseQuery = ``;
+      return next(
+        pollError(
+          'recordResponses',
+          'unsupported feature',
+          'please include responseId',
+        ),
+      );
+    }
 
     // emit response on websocket room with roomId in route params
     // io.to(roomCode).emit(responseDetails);
-
-    return next();
   },
 };
 
