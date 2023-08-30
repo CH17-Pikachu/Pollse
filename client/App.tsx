@@ -1,23 +1,24 @@
-import React, { useState } from 'react';
+import React from 'react';
 import './stylesheets/app.scss';
+import { BrowserRouter, Routes, Route } from 'react-router-dom';
+import Audience from './containers/Audience';
+import AudienceResult from './containers/AudienceResults';
+import Home from './containers/Home';
+import Presenter from './containers/Presenter';
+import PresenterResult from './containers/PresenterResults';
 
-const App = () => {
-
-  const [world, setWorld] = useState("Hello world");
-
-  function testFetch() {
-    fetch('/test')
-    .then(response => response.json())
-    .then(data => setWorld(data))
-    .catch(err => console.log('error: ' + err))
-  }
-
-  return(
-    <div>
-      <p>{world}</p>
-      <button onClick={testFetch}>CHANGE THE WORLD</button>
-    </div>
+function App() {
+  return (
+    <BrowserRouter>
+      <Routes>
+        <Route path='/audience' element={<Audience />} />
+        <Route path='/audience-results' element={<AudienceResult />} />
+        <Route path='/presenter' element={<Presenter />} />
+        <Route path='/presenter-results/:room' element={<PresenterResult />} />
+        <Route path='/' element={<Home />} />
+      </Routes>
+    </BrowserRouter>
   );
-};
+}
 
 export default App;
