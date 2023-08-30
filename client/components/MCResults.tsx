@@ -11,7 +11,11 @@ import {
   Legend,
 } from 'chart.js';
 import { Bar } from 'react-chartjs-2';
+import { io } from 'socket.io-client';
 import { Question, Response } from '../../types/types';
+
+
+const socket = io('http://localhost:3000');
 
 // import websocket
 // import { socket } from '../socket';
@@ -52,11 +56,13 @@ function MCResults() {
       },
     ],
   });
-// 
-  // ! const [isConnected, setIsConnected] = useState(socket.connected);
+
+  const [isConnected, setIsConnected] = useState(socket.connected);
   // ! const [pollEvents, setPollEvents] = useState([]);
 
+
   useEffect(() => {
+
     if (!questionHasBeenUpdated) {
       fetch(`/api/poll/questionsInPoll/${pollId}`)
         .then(response => response.json())
@@ -65,28 +71,86 @@ function MCResults() {
 
       setQuestionHasBeenUpdated(true);
     }
-    // function onConnect() {
-    //   setIsConnected(true);
+
+    function onConnect() {
+      setIsConnected(true)
+      socket.emit('join', pollId)
+      console.log('websocket connected to room ', pollId);
+    }
+    
+    function onDisconnect() {
+      setIsConnected(false);
+      console.log('websocket disconnected');
+    }
+      
+    // function updateResponseCount(response: any) {
+    //   const parsedResponse = JSON.parse(response) as Response;
+    //   console.log(parsedResponse)
+    //   const copyQuestion = question;
+    //   console.log(question.responseOptions);
+    //   const foundResponse = (question.responseOptions as Response[]).find((el) => {
+    //     console.log(el.responseId, parsedResponse.responseId)
+    //     // el.responseId == parsedResponse.responseId
+    //   })
+    //   foundResponse.count = parsedResponse.count;
+    //   setQuestion(copyQuestion);
     // }
 
-    // function onDisconnect() {
-    //   setIsConnected(false);
-    // }
+    socket.on('connect', onConnect);
+    socket.on('disconnect', onDisconnect);
+    // socket.on(pollId.toString(), updateResponseCount);
+    
+/* 
+function App() {
+      const [fooEvents, setFooEvents] = useState([]);
+    
+      useEffect(() => {
+        // no-op if the socket is already connected
+        socket.connect();
+    
+        return () => {
+          socket.disconnect();
+        };
+      }, []);
+    
+      useEffect(() => {
+        function onFooEvent(value) {
+          setFooEvents(fooEvents.concat(value));
+        }
+    
+        socket.on('foo', onFooEvent);
+    
+        return () => {
+          socket.off('foo', onFooEvent);
+        };
+      }, [fooEvents]);
+    
+      // ...
+    } 
+*/
 
-    // function onPollEvent(value) {
-    //   // setPollEvents();
-    // }
-
-    // socket.on('connect', onConnect);
-    // socket.on('disconnect', onDisconnect);
-    // socket.on('poll', onPollEvent);
-
-    // return () => {
-    //   socket.off('connect', onConnect);
-    //   socket.off('disconnect', onDisconnect);
-    //   socket.off('poll', onPollEvent);
-    // };
+    return () => {
+      socket.off('connect', onConnect);
+      socket.off('disconnect', onDisconnect);
+      // socket.off('poll', onPollEvent);
+    };
   }, []);
+
+  useEffect(() => {
+    function updateResponseCount(response: any) {
+      const parsedResponse = JSON.parse(response) as Response;
+      const copyQuestion = structuredClone(question);
+      const foundResponse = (copyQuestion.responseOptions as Response[]).find((el) => el.responseId == parsedResponse.responseId)
+      foundResponse.count += 1;
+      setQuestion(copyQuestion);
+    }
+
+    socket.on(pollId.toString(), updateResponseCount);
+
+    return () => {
+      socket.off(pollId.toString(), updateResponseCount)
+    }
+  }, [question])
 
   const options = {
     indexAxis: 'y' as const,
