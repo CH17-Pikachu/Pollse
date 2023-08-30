@@ -149,7 +149,29 @@ const pollController: PollController = {
       );
   },
 
-  stopPoll: (req, res, next) => next(),
+  stopPoll: (req, res, next) => {
+    // flip the boolean in the poll at the roomcode
+    const { roomCode: roomString } = req.params;
+    const roomCode = parseInt(roomString, 10);
+    if (!roomCode)
+      return next(
+        pollError(
+          'stopPoll',
+          'invalid room code',
+          'couldnt parse room code to integer',
+        ),
+      );
+    // query db to flip poll isOpen boolean
+    const queryText = `
+        UPDATE "Polls" SET is_open = false WHERE poll_id = $1;`;
+    const vals = [roomCode];
+    pool
+      .query(queryText, vals)
+      .then(() => next())
+      .catch(err =>
+        next(pollError('stopPoll', 'db comm error when stopping poll', err)),
+      );
+  },
 
   getQuestionsInPoll: (req, res, next) => next(),
 
