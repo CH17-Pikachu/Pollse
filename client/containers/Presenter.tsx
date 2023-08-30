@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { StartPollRequestBody, CreatePollId } from '../../types/types';
+import { Question, CreatePollId, QuestionType } from '../../types/types';
 
 function Presenter() {
   // Will have pollId gotten from backend and passed in?
@@ -30,10 +30,10 @@ function Presenter() {
       return;
     }
 
-    const fetchBody: StartPollRequestBody = {
-      question: questionValue,
-      timer: timerValue,
-      answers 
+    const fetchBody: Question = {
+      text: questionValue,
+      type: QuestionType.MULTIPLE_CHOICE,
+      responseOptions: answers
     }
 
     try {
