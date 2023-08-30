@@ -24,7 +24,7 @@ const pollController: PollController = {
     const pollQuery = {
       text: `
       INSERT INTO "Polls" (presenter_id)
-        VALUES (${presenter_id})
+      VALUES (${presenter_id})
       RETURNING poll_id;
       `,
     };
@@ -124,7 +124,19 @@ const pollController: PollController = {
 
   startPoll: (req, res, next) => {
     // flip the boolean in the poll at the roomcode
-    const { roomCode } = req.params;
+    const { roomCode: roomString } = req.params;
+    const roomCode = parseInt(roomString, 10);
+    if (!roomCode)
+      return next(
+        pollError(
+          'startPoll',
+          'invalid room code',
+          'couldnt parse room code to integer',
+        ),
+      );
+    // query db to flip poll isOpen boolean
+    const queryText = `
+    `;
   },
 
   stopPoll: (req, res, next) => next(),
@@ -136,7 +148,7 @@ const pollController: PollController = {
 
   recordResponses: (req, res, next) => {
     const { roomCode } = req.params;
-    const { response }: { response: Response } = req.body;
+    const { response } = req.body as { response: Response };
     // write response to db
 
     // emit response on websocket room with roomId in route params
