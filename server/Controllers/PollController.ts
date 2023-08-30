@@ -1,8 +1,9 @@
 /**
  * Handles interactions with poll data
  */
+import { query } from 'express';
 import { createError } from '../utils';
-import { PollController, Question } from '../../types/types';
+import { PollController, Question, QuestionType } from '../../types/types';
 import pool from '../Models/queryModel';
 
 const pollError = (method: string, type: string, err: unknown) =>
@@ -23,13 +24,16 @@ const pollController: PollController = {
     // pass in the presenter's id, obtained from userController
     const pollQuery = {
       text: `
-      INSERT INTO Polls (presenter_id)
+      INSERT INTO "Polls" (presenter_id)
+      VALUES ($1)
       RETURNING poll_id;
       `,
     };
 
+    const pollVal = [presenter_id];
+
     pool
-      .query<{ poll_id: number }>(pollQuery)
+      .query<{ poll_id: number }, string | QuestionType>(pollQuery, pollVal)
       .then(queryResponse => {
         if (queryResponse.rows.length === 0)
           throw Error('did not receive id back from createPoll');
@@ -41,7 +45,16 @@ const pollController: PollController = {
   },
 
   populateQuestions: (req, res, next) => {
-    const { roomCode } = req.params;
+    const { roomCode: roomString } = req.params;
+    const roomCode = parseInt(roomString, 10);
+    if (!roomCode)
+      return next(
+        pollError(
+          'populateQuestions',
+          'invalid room code',
+          'couldnt parse room code to integer',
+        ),
+      );
     const { question } = req.body as { question: Question };
     if (!question)
       return next(
@@ -52,23 +65,89 @@ const pollController: PollController = {
         ),
       );
     // query database to create new questions tied to room
-    // TODO start here
-    // const questionQueryText = `INSERT INTO Questions `;
-    // if (question.responseOptions) {
-    //   let responseOptionsQueryText = ``;
-    //   for (let i = 1; i <= question.responseOptions.length; i++) {
-    //     responseOptionsQueryText+=`INSERT INTO Answers `
-    //   }
-    // }
-    // pool.query(queryText);
-    // if a question has an answers array, query to create answers
-    return next();
+    const questionQueryText = `
+      INSERT INTO "Questions" (poll_id, question_text, question_type)
+      VALUES ($1, $2, $3)
+      RETURNING question_id;`;
+    const questionVals = [roomCode, question.text, question.type];
+    pool
+      .query<{ question_id: number }, string | QuestionType>(
+        questionQueryText,
+        questionVals,
+      )
+      .then(result => {
+        const qIds = result.rows;
+        if (qIds.length === 0) throw Error('couldnt insert question');
+        // TODO support for multiple questions
+        // assume only one question; populate its question_id
+        question.id = qIds[0].question_id;
+        // we have our question in the db, and we have its id, so lets do answers
+        if (question.responseOptions) {
+          // build query
+          let responseOptionsQueryText = `INSERT INTO "Responses" (question_id, response_text)
+          VALUES`;
+          const vars: string[] = [];
+          // iterate through each responseOption
+          // i is 1-indexed bc sql is dumb
+          for (let i = 1; i <= question.responseOptions.length; i += 1) {
+            const response = question.responseOptions[i - 1];
+            responseOptionsQueryText += `
+               (${question.id}, $${i}),`;
+            vars.push(typeof response === 'string' ? response : response.text);
+          }
+          responseOptionsQueryText = responseOptionsQueryText.slice(0, -1);
+          responseOptionsQueryText += ';';
+          pool
+            .query(responseOptionsQueryText, vars)
+            .then(() => next())
+            .catch(err =>
+              next(
+                pollError(
+                  'populateQuestions',
+                  'db communication adding response',
+                  err,
+                ),
+              ),
+            );
+        } else return next();
+      })
+      .catch(err =>
+        next(
+          pollError(
+            'populateQuestions',
+            'db communication adding question',
+            err,
+          ),
+        ),
+      );
   },
 
   // Stretch
   setLifetime: (req, res, next) => next(),
 
-  startPoll: (req, res, next) => next(),
+  startPoll: (req, res, next) => {
+    // flip the boolean in the poll at the roomcode
+    const { roomCode: roomString } = req.params;
+    const roomCode = parseInt(roomString, 10);
+    if (!roomCode)
+      return next(
+        pollError(
+          'startPoll',
+          'invalid room code',
+          'couldnt parse room code to integer',
+        ),
+      );
+    // query db to flip poll isOpen boolean
+    const queryText = `
+    UPDATE "Polls" SET is_open = true WHERE poll_id = $1;`;
+    const vals = [roomCode];
+    pool
+      .query(queryText, vals)
+      .then(() => next())
+      .catch(err =>
+        next(pollError('startPoll', 'db comm error when starting poll', err)),
+      );
+  },
 
   stopPoll: (req, res, next) => next(),
 
@@ -79,7 +158,7 @@ const pollController: PollController = {
 
   recordResponses: (req, res, next) => {
     const { roomCode } = req.params;
-    const { response }: { response: Response } = req.body;
+    const { response } = req.body as { response: Response };
     // write response to db
 
     // emit response on websocket room with roomId in route params
