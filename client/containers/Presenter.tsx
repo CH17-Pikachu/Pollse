@@ -9,7 +9,7 @@ function Presenter() {
   // Will have pollId gotten from backend and passed in?
   const [pollId, setPollId] = useState<number | null>(null);
   const [answers, setAnswers] = useState<string[]>([]);
-  const [timerValue, setTimerValue] = useState<number>(0);
+  // const [timerValue, setTimerValue] = useState<number>(0);
 
   useEffect((): void => {
     async function getPollId(): Promise<void> {
@@ -65,11 +65,11 @@ function Presenter() {
   }
 
   // Restricts timer so it will only take numbers
-  function updateTimerValue(inputValue: string): void {
-    if (/^[0-9]*$/.test(inputValue)) {
-      setTimerValue(Number(inputValue));
-    }
-  }
+  // function updateTimerValue(inputValue: string): void {
+  //   if (/^[0-9]*$/.test(inputValue)) {
+  //     setTimerValue(Number(inputValue));
+  //   }
+  // }
 
   function createNewAnswer(e: React.FormEvent): void {
     e.preventDefault();
@@ -109,7 +109,7 @@ function Presenter() {
         />
       </label>
       <br />
-      <label htmlFor='pollTimer'>
+      {/* <label htmlFor='pollTimer'>
         Timer:
         <input
           type='text'
@@ -119,7 +119,7 @@ function Presenter() {
           value={timerValue}
           onChange={e => updateTimerValue(e.target.value)}
         />
-      </label>
+      </label> */}
       <form onSubmit={e => createNewAnswer(e)}>
         <label htmlFor='newAnswerInput'>
           New Answer:
