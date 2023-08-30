@@ -84,17 +84,19 @@ const pollController: PollController = {
         // we have our question in the db, and we have its id, so lets do answers
         if (question.responseOptions) {
           // build query
-          let responseOptionsQueryText = ``;
+          let responseOptionsQueryText = `INSERT INTO "Responses" (question_id, response_text)
+          VALUES`;
           const vars: string[] = [];
           // iterate through each responseOption
           // i is 1-indexed bc sql is dumb
           for (let i = 1; i <= question.responseOptions.length; i += 1) {
             const response = question.responseOptions[i - 1];
             responseOptionsQueryText += `
-              INSERT INTO "Responses" (question_id, response_text)
-              VALUES (${question.id}, $${i});`;
+               (${question.id}, $${i}),`;
             vars.push(typeof response === 'string' ? response : response.text);
           }
+          responseOptionsQueryText = responseOptionsQueryText.slice(0, -1);
+          responseOptionsQueryText += ';';
           pool
             .query(responseOptionsQueryText, vars)
             .then(() => next())
@@ -118,8 +120,6 @@ const pollController: PollController = {
           ),
         ),
       );
-
-    return next();
   },
 
   // Stretch
