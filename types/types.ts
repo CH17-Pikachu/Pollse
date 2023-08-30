@@ -42,6 +42,7 @@ export interface Question {
 
 export interface Response {
   questionId?: number;
+  responseId?: number;
   text: string;
   count: number;
 }
