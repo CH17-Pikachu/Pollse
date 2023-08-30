@@ -169,6 +169,7 @@ function MCResults() {
 
   return (
     <div className='MC-results'>
+      <h3>Poll: {pollId}</h3>
       <h3>Question: {question.text}</h3>
 
       <Bar options={options} data={data} />
