@@ -53,9 +53,7 @@ function Presenter() {
       });
 
       if (createResponse.status === 200) {
-        navigate(`/presenter-results/${pollId}`, {
-          state: { question: 'test' },
-        });
+        navigate(`/presenter-results/${pollId}`);
       } else {
         console.log('could not create poll');
       }
