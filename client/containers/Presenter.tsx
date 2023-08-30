@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { Question, CreatePollId, QuestionType } from '../../types/types';
+import { Question, QuestionType } from '../../types/types';
 
 function Presenter() {
   // Will have pollId gotten from backend and passed in?
@@ -11,8 +11,8 @@ function Presenter() {
     async function getPollId(): Promise<void> {
       try {
         const pollIdResponse = await fetch(`/api/poll/createPoll`);
-        const pollIdData = await pollIdResponse.json() as CreatePollId;
-        setPollId(pollIdData.pollId);
+        const pollIdData = await pollIdResponse.json() as { roomCode: number };
+        setPollId(pollIdData.roomCode);
       }
       catch (error) {
         console.log(`Error when getting pollId: ${error}`);
@@ -42,7 +42,7 @@ function Presenter() {
         headers: {
           'Content-Type': 'application/json'
         },
-        body: JSON.stringify(fetchBody)
+        body: JSON.stringify({ question: fetchBody })
       })
 
       // Don't know what to do after creation yet
