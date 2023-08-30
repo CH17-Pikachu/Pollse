@@ -1,13 +1,12 @@
-import request from 'supertest';
+// import request from 'supertest';
 
 // Make sure you are running the server
-const server = 'http://localhost:3000'
+const server = 'http://localhost:3000';
 
 describe('Check test route', () => {
   it('Responds with "World changed"', async () => {
     // Send the request and store the response
-    const response = await request(server)
-      .get('/test');
+    const response = await request(server).get('/api/test');
 
     // Make sure headers match the response's. They are case sensitive
     expect(response.headers['content-type']).toMatch(/application\/json/);

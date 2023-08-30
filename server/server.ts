@@ -1,3 +1,4 @@
+import * as dotenv from 'dotenv';
 import express, { Request, Response, NextFunction } from 'express';
 import path from 'path';
 // import routes
@@ -5,6 +6,9 @@ import pollRoute from './Routes/pollRoute';
 import testRoute from './Routes/testRoute';
 import logger from './logger';
 import { LogType } from '../types/types';
+
+// Initialize environment variables
+dotenv.config();
 
 const app = express();
 const PORT = 3000;
