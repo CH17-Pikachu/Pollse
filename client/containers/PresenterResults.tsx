@@ -2,24 +2,24 @@ import React from 'react';
 import MCResults from '../components/MCResults';
 import NavBar from '../components/NavBar';
 
-export interface PresenterProps {
-  presenterName: string;
-  pollTitle: string;
-  question: string;
-  questionType: string;
-  responseOptions: string[];
-}
+// export interface PresenterProps {
+//   presenterName: string;
+//   pollId: number;
+//   question: string;
+//   questionType: string;
+//   responseOptions: string[];
+// }
 
-const mockProps: PresenterProps = {
-  presenterName: 'Bob',
-  pollTitle: 'Mood',
-  question: 'How are you feeling today?',
-  questionType: 'MC',
-  responseOptions: ['happy', 'hungry', 'sad', 'excited'],
-};
+// const mockProps: PresenterProps = {
+//   presenterName: 'Bob',
+//   pollId: 12345,
+//   question: 'How are you feeling today?',
+//   questionType: 'MC',
+//   responseOptions: ['happy', 'hungry', 'sad', 'excited'],
+// };
 
-function PresenterResults() {
-  const props = mockProps;
+function PresenterResults(props) {
+  // const props = mockProps;
 
   const closePoll = () => {
     // this need to do socket.disconnet()
@@ -32,7 +32,7 @@ function PresenterResults() {
       <h4>Presenter View</h4>
       <MCResults
         presenterName={props.presenterName}
-        pollTitle={props.pollTitle}
+        pollId={props.pollId}
         question={props.question}
         questionType={props.questionType}
         responseOptions={props.responseOptions}

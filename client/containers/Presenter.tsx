@@ -1,5 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { Question, CreatePollId, QuestionType } from '../../types/types';
+import NavBar from '../components/NavBar';
+import PresenterResults from './PresenterResults';
 
 function Presenter() {
   const navigate = useNavigate();
@@ -133,6 +135,8 @@ function Presenter() {
       </button>
       <p>Answers:</p>
       {answersElements}
+
+      <PresenterResults pollId={pollId} />
     </div>
   );
 }
