@@ -96,7 +96,7 @@ function Presenter() {
   });
 
   return (
-    <div>
+    <div className='presenter-view'>
       <NavBar />
       <p>Room ID:{pollId}</p>
       <label htmlFor='pollQuestion'>

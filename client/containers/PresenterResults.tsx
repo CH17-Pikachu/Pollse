@@ -30,12 +30,7 @@ function PresenterResults() {
       <NavBar />
       <h3>Results</h3>
       <h4>Presenter View</h4>
-      <MCResults
-      // pollId={pollId}
-      // question={props.question}
-      // questionType={props.questionType}
-      // responseOptions={props.responseOptions}
-      />
+      <MCResults />
       <button type='button' onClick={closePoll}>
         Close Poll
       </button>
