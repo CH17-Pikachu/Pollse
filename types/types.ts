@@ -2,6 +2,8 @@
  * Contains types used frequently across codebase
  */
 
+import { RequestHandler } from 'express';
+
 /**
  * Logger types (success is green, error is red, warning is yellow)
  */
@@ -29,12 +31,103 @@ export enum QuestionType {
   MULTIPLE_CHOICE,
   SHORT_RESPONSE,
 }
-
 export interface Question {
   id?: number;
   text: string;
   type: QuestionType;
   responseOptions?: [string]; // presenter answers; not audience responses
+}
+
+export interface Response {
+  questionId: number;
+  text: string;
+}
+
+export interface PollController {
+  /**
+   * Creates an empty poll with no questions and default lifetime
+   * Adds new room code to res.locals
+   *
+   * @param req express request object
+   * @param res express response object
+   * @param next express next function
+   * @returns invocation of next
+   */
+  createPoll: RequestHandler;
+
+  /**
+   * Adds questions to questions table with given pollId provided in route params
+   * If question is multiple choice, also initializes answers in answers table
+   *
+   * @param req express request object
+   * @param res express response object
+   * @param next express next function
+   * @returns invocation of next
+   */
+  populateQuestions: RequestHandler;
+
+  /**
+   * Edits poll duration if data provided in req body
+   *
+   * @param req express request object
+   * @param res express response object
+   * @param next express next function
+   * @returns invocation of next
+   */
+  setLifetime: RequestHandler;
+
+  /**
+   * Sets poll to open, starts timer from lifetime
+   *
+   * @param req express request object
+   * @param res express response object
+   * @param next express next function
+   * @returns invocation of next
+   */
+  startPoll: RequestHandler;
+
+  /**
+   * Sets poll to closed
+   * Ends websocket room?
+   *
+   * @param req express request object
+   * @param res express response object
+   * @param next express next function
+   * @returns invocation of next
+   */
+  stopPoll: RequestHandler;
+
+  /**
+   * Poll ID in route params
+   * Populate questions (and relevant choices if MC) into res.locals
+   *
+   * @param req express request object
+   * @param res express response object
+   * @param next express next function
+   * @returns invocation of next
+   */
+  getQuestionsInPoll: RequestHandler;
+
+  /**
+   * Sets res.locals.open to true or false depending on state of poll with ID in route params
+   *
+   * @param req express request object
+   * @param res express response object
+   * @param next express next function
+   * @returns invocation of next
+   */
+  checkOpen: RequestHandler;
+
+  /**
+   * req.body must have question:answer pairs
+   * Create answers in answer table (or update count if mc answers already exist)
+   *
+   * @param req express request object
+   * @param res express response object
+   * @param next express next function
+   * @returns invocation of next
+   */
+  recordResponses: RequestHandler;
 }
 
 export default {};

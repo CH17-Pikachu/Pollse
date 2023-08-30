@@ -3,6 +3,7 @@
  */
 import express from 'express';
 import PollController from '../Controllers/PollController';
+import UserController from '../Controllers/UserController';
 
 const router = express.Router();
 
@@ -11,9 +12,14 @@ const router = express.Router();
  * with questions and other details before starting poll
  * Responds with new room code
  */
-router.get('/createPoll', PollController.createPoll, (req, res) => {
-  res.sendStatus(200);
-});
+router.get(
+  '/createPoll',
+  UserController.createPresenter,
+  PollController.createPoll,
+  (req, res) => {
+    res.status(200).json(res.locals.roomCode);
+  },
+);
 
 /**
  * Endpoint for populating poll with questions and starting lifetime countdown
@@ -48,7 +54,6 @@ router.get(
   '/questionsInPoll/:roomCode',
   PollController.getQuestionsInPoll,
   (req, res) => {
-    // [questionid: {text, qtype, ?[answers]}]
     res.sendStatus(200);
   },
 );
