@@ -6,7 +6,7 @@ export interface PresenterProps {
   pollTitle: string;
   question: string;
   questionType: string;
-  numOfResponses: number;
+  responseOptions: string[];
 }
 
 const mockProps: PresenterProps = {
@@ -14,7 +14,7 @@ const mockProps: PresenterProps = {
   pollTitle: 'Mood',
   question: 'How are you feeling today?',
   questionType: 'MC',
-  numOfResponses: 5,
+  responseOptions: ['happy', 'hungry', 'sad', 'excited'],
 };
 
 function PresenterResults() {
@@ -22,14 +22,16 @@ function PresenterResults() {
 
   return (
     <div>
-      <p>PresenterResults</p>
+      <h3>Results</h3>
+      <h4>Presenter View</h4>
       <MCResults
         presenterName={props.presenterName}
         pollTitle={props.pollTitle}
         question={props.question}
         questionType={props.questionType}
-        numOfResponses={props.numOfResponses}
+        responseOptions={props.responseOptions}
       />
+      <button>Close Poll</button>
     </div>
   );
 }
