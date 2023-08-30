@@ -14,7 +14,7 @@ const userController: UserController = {
     // query db to add new presenter
     const presenterQuery = {
       text: `
-      INSERT INTO Presenters DEFAULT VALUES
+      INSERT INTO "Presenters" DEFAULT VALUES
       RETURNING presenter_id;`,
     };
     // pass presenter_id into res.locals
