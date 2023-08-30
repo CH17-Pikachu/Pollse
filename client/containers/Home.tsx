@@ -1,5 +1,6 @@
 import React from 'react';
 import { NavLink, useNavigate } from 'react-router-dom';
+import NavBar from '../components/NavBar';
 
 function Home() {
   const navigate = useNavigate();
@@ -13,13 +14,12 @@ function Home() {
 
   return (
     <div>
-      <div>
-        <img src='../assets/Pollse_Logo.png' alt='logo' />
-      </div>
-      <div>
+      <NavBar />
+      <div className='home-page'>
         <NavLink className='presenter-btn' to='/presenter'>
-          Create Poll
+          <button>Create Poll</button>
         </NavLink>
+        <hr className='solid' />
         <br />
         {/* <NavLink className='audience-btn' to='/audience/1'>Join Room</NavLink> */}
         <input type='text' id='pollId' placeholder='Poll ID' />
