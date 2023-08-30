@@ -41,7 +41,7 @@ export interface Question {
 }
 
 export interface Response {
-  questionId: number;
+  questionId?: number;
   text: string;
   count: number;
 }
@@ -57,6 +57,8 @@ export interface PollController {
    * @returns invocation of next
    */
   createPoll: RequestHandler;
+
+  verifyRoomCode: RequestHandler;
 
   /**
    * Adds questions to questions table with given pollId provided in route params

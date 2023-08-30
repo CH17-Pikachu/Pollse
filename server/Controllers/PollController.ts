@@ -3,7 +3,12 @@
  */
 import { query } from 'express';
 import { createError } from '../utils';
-import { PollController, Question, QuestionType } from '../../types/types';
+import {
+  PollController,
+  Question,
+  QuestionType,
+  Response,
+} from '../../types/types';
 import pool from '../Models/queryModel';
 
 const pollError = (method: string, type: string, err: unknown) =>
@@ -44,17 +49,24 @@ const pollController: PollController = {
       .catch(err => next(pollError('createPoll', 'db communication', err)));
   },
 
-  populateQuestions: (req, res, next) => {
+  verifyRoomCode: (req, res, next) => {
     const { roomCode: roomString } = req.params;
     const roomCode = parseInt(roomString, 10);
-    if (!roomCode)
+    if (!roomCode) {
       return next(
         pollError(
-          'populateQuestions',
+          'verifyRoomCode',
           'invalid room code',
           'couldnt parse room code to integer',
         ),
       );
+    }
+    res.locals.roomCode = roomCode;
+    return next();
+  },
+
+  populateQuestions: (req, res, next) => {
+    const { roomCode } = res.locals;
     const { question } = req.body as { question: Question };
     if (!question)
       return next(
@@ -127,16 +139,7 @@ const pollController: PollController = {
 
   startPoll: (req, res, next) => {
     // flip the boolean in the poll at the roomcode
-    const { roomCode: roomString } = req.params;
-    const roomCode = parseInt(roomString, 10);
-    if (!roomCode)
-      return next(
-        pollError(
-          'startPoll',
-          'invalid room code',
-          'couldnt parse room code to integer',
-        ),
-      );
+    const { roomCode } = res.locals;
     // query db to flip poll isOpen boolean
     const queryText = `
     UPDATE "Polls" SET is_open = true WHERE poll_id = $1;`;
@@ -151,16 +154,7 @@ const pollController: PollController = {
 
   stopPoll: (req, res, next) => {
     // flip the boolean in the poll at the roomcode
-    const { roomCode: roomString } = req.params;
-    const roomCode = parseInt(roomString, 10);
-    if (!roomCode)
-      return next(
-        pollError(
-          'stopPoll',
-          'invalid room code',
-          'couldnt parse room code to integer',
-        ),
-      );
+    const { roomCode } = res.locals;
     // query db to flip poll isOpen boolean
     const queryText = `
         UPDATE "Polls" SET is_open = false WHERE poll_id = $1;`;
@@ -173,13 +167,62 @@ const pollController: PollController = {
       );
   },
 
-  getQuestionsInPoll: (req, res, next) => next(),
+  getQuestionsInPoll: (req, res, next) => {
+    const { roomCode } = res.locals;
+    const queryText = `
+      SELECT q.question_id, q.question_text, q.question_type, 
+        JSON_AGG (ROW_TO_JSON( (r.response_text, r.count))) responses
+      FROM "Questions" AS "q" 
+        INNER JOIN "Responses" as "r" USING (question_id)
+      WHERE q.poll_id = ${roomCode}
+      GROUP BY q.question_id;`;
+
+    pool
+      .query<{
+        question_id: number;
+        question_text: string;
+        question_type: QuestionType;
+        responses: { f1: string; f2: number }[];
+      }>(queryText)
+      .then(result => {
+        const questions = result.rows;
+        if (questions.length === 0) throw Error('couldnt find any questions');
+        // TODO support multiple questions in poll
+        const question = questions[0];
+        const responses: Response[] = [];
+        for (let i = 0; i < question.responses.length; i += 1) {
+          responses.push({
+            count: question.responses[i].f2,
+            text: question.responses[i].f1,
+          });
+        }
+        const resQuestions: Question[] = [
+          {
+            id: question.question_id,
+            text: question.question_text,
+            type: question.question_type,
+            responseOptions: responses,
+          },
+        ];
+        res.locals.questions = resQuestions;
+        return next();
+      })
+      .catch(err =>
+        next(
+          pollError(
+            'getQuestionsInPoll',
+            'db comm getting qs and rs from roomcode',
+            err,
+          ),
+        ),
+      );
+  },
 
   // stretch
   checkOpen: (req, res, next) => next(),
 
   recordResponses: (req, res, next) => {
-    const { roomCode } = req.params;
+    const { roomCode } = res.locals;
     const { response } = req.body as { response: Response };
     // write response to db
 
