@@ -31,16 +31,28 @@ export enum QuestionType {
   MULTIPLE_CHOICE,
   SHORT_RESPONSE,
 }
+/**
+ * This question interface describes front-end and backend communication
+ * Frontend sends Questions when starting poll (presenter view)
+ * - Text and type are necessary, responseOptions are necessary if mult. choice
+ * - ResponseOptions can be an array of strings from the front-end (that's fine)
+ *
+ * Backend sends Question objects back from the GET questionsInPoll/roomCode endpoint
+ * (This is the audience response submit page)
+ * - In this case, the id field will be populated, and the responseOptions will
+ *   be an array of Response objects, with the qIds and counts
+ */
 export interface Question {
   id?: number;
   text: string;
   type: QuestionType;
-  responseOptions?: [string]; // presenter answers; not audience responses
+  responseOptions?: [Response] | [string];
 }
 
 export interface Response {
   questionId: number;
   text: string;
+  count: number;
 }
 
 export interface PollController {
