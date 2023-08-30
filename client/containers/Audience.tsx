@@ -1,19 +1,5 @@
-// import React from 'react';
-
-// function Audience() {
-//   return (
-//     <div>
-//       <p>Audience</p>
-//     </div>
-//   );
-// }
-
-// export default Audience;
-
-// import React, { useState, useEffect } from 'react'
-// import { supabase } from '../client.js'
-// import { useNavigate } from 'react-router-dom'
-
+import React, { useState, useEffect } from 'react'
+import { useNavigate, useParams } from 'react-router-dom'
 
 // async function fetchQuestion() {
 // 	const { data, error } = await supabase.from('questions').select("*");
@@ -26,36 +12,80 @@
 // 	return data || [];
 // }
 
-// const question = () => {
-// 	const [questions, setQuestions] = useState([]);
 
-// 	let navigate = useNavigate();
-// 	const routeChange = (question_id) => {
-// 		let path = `/question/` + `${question_id}`;
-// 		navigate(path)
-// 	}
+const Audience = () => {
+	const navigate = useNavigate();
 
-// 	useEffect(() => {
-// 		async function getQuestion() {
-// 			const data = await fetchQuestion();
-// 			setQuestions(data);
-// 		}
-// 		getQuestion();
-// 	}, []);
+	const { pollId } = useParams();
+	const [question, setQuestion] = useState(pollId);
+	const [answers, setAnswers] = useState(['answer1', 'answer2', 'answer3']);
 
-// 	return (
-// 		<div>
-// 			<div className="question-container">
-// 				<ul className="question">
-// 						<div className="gallery-card" onClick={() => routeChange(question.id)}>
-// 								question={question.name}
-// 								answer={question.answer}
-// 							/>
-// 						</div>
-// 				</ul>
-// 			</div>
-// 		</div>
-// 	)
-// }
+	useEffect(() => {
+		async function getQuestion() {
+			try {
+				const response = await fetch(`/api/poll/questionsInPoll/${pollId}`);
+				const data = response.json();
+				setQuestion(data);
+			}
+			catch (error) {
+				console.log(`Error occured when fetching question data: ${error}`)
+			}
+		}
+		getQuestion();
+	}, []);
+
+  const handleSubmitData = async (e: any) => {
+    e.preventDefault();
+    const checkedAnswers: any[] = [];
+    const answers = e.target.elements;
+
+		for (let i = 0; i < answers.length; i++) {
+			if (answers[i].checked) {
+				checkedAnswers.push(answers[i].value);
+			}
+		}
+
+		try {
+      const response = await fetch(`/api/poll/newAnswers/${pollId}`, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({ answers: checkedAnswers }),
+      });
+
+			if (response.status === 200) {
+				// navigate to the results
+				navigate(`/audience-results/${pollId}`)
+			}
+			else {
+				// figure out what do
+				console.log(`did not receive a OK status: ${response}`);
+			}
+		}
+		catch (error) {
+			console.error(`Error when submitting answers: ${error}`)
+		}
+  }
+
+	return (
+		<div>
+			<div className="question-container">
+        <h2>{question}</h2>
+				<form className="question" onSubmit={(e) => handleSubmitData(e)}>
+          {answers.map(ans => {
+            return (
+              <div>
+                <input type="checkbox" id={ans} name={ans} value={ans}/>
+                <label htmlFor={ans}>{ans}</label><br />
+              </div>
+            )
+          })}
+          <input type="submit" value="submit"></input>
+				</form>
+			</div>
+		</div>
+	)
+}
 
 export default Audience;
