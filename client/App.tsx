@@ -9,18 +9,20 @@ import PresenterResults from './containers/PresenterResults';
 
 function App() {
   return (
-    <BrowserRouter>
-      <Routes>
-        <Route path='/audience/:pollId' element={<Audience />} />
-        <Route path='/audience-results' element={<AudienceResults />} />
-        <Route path='/presenter' element={<Presenter />} />
-        <Route
-          path='/presenter-results/:pollId'
-          element={<PresenterResults />}
-        />
-        <Route path='/' element={<Home />} />
-      </Routes>
-    </BrowserRouter>
+    <main>
+      <BrowserRouter>
+        <Routes>
+          <Route path='/audience/:pollId' element={<Audience />} />
+          <Route path='/audience-results' element={<AudienceResults />} />
+          <Route path='/presenter' element={<Presenter />} />
+          <Route
+            path='/presenter-results/:pollId'
+            element={<PresenterResults />}
+          />
+          <Route path='/' element={<Home />} />
+        </Routes>
+      </BrowserRouter>
+    </main>
   );
 }
 
