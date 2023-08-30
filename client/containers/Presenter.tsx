@@ -42,7 +42,7 @@ function Presenter() {
         headers: {
           'Content-Type': 'application/json'
         },
-        body: JSON.stringify(fetchBody)
+        body: JSON.stringify({ question: fetchBody })
       })
 
       // Don't know what to do after creation yet
