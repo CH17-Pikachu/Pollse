@@ -1,13 +1,13 @@
 import React, { useState, useEffect } from 'react'
 import { useNavigate, useParams } from 'react-router-dom'
-import { Question } from '../../types/types'
+import { Question, Response } from '../../types/types'
 
 function Audience () {
 	const navigate = useNavigate();
 
 	const { pollId } = useParams();
 	const [question, setQuestion] = useState(pollId);
-	const [answers, setAnswers] = useState(['answer1', 'answer2', 'answer3']);
+	const [answers, setAnswers] = useState<Response[]>([{ questionId: 0, text: 'question', count: 1 }]);
 
 	useEffect(() => {
 		async function getQuestion() {
@@ -16,7 +16,7 @@ function Audience () {
 				const response = await fetch(`/api/poll/questionsInPoll/${pollId}`);
 				const data = await response.json() as Question;
 				setQuestion(data.text);
-        setAnswers(data.responseOptions);
+        setAnswers(data.responseOptions as Response[]);
 			}
 			catch (error) {
 				console.log(`Error occured when fetching question data: ${error}`)
@@ -70,8 +70,8 @@ function Audience () {
   answers.forEach((ans) => {
     answersList.push(
     <div>
-      <input type="checkbox" id={ans} name={ans} value={ans}/>
-      <label htmlFor={ans}>{ans}</label><br />
+      <input type="checkbox" id={ans.text} name={ans.text} value={ans.text}/>
+      <label htmlFor={ans.text}>{ans.text}</label><br />
     </div>
     )
   })
