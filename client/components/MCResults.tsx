@@ -82,52 +82,9 @@ function MCResults() {
       setIsConnected(false);
       console.log('websocket disconnected');
     }
-      
-    // function updateResponseCount(response: any) {
-    //   const parsedResponse = JSON.parse(response) as Response;
-    //   console.log(parsedResponse)
-    //   const copyQuestion = question;
-    //   console.log(question.responseOptions);
-    //   const foundResponse = (question.responseOptions as Response[]).find((el) => {
-    //     console.log(el.responseId, parsedResponse.responseId)
-    //     // el.responseId == parsedResponse.responseId
-    //   })
-    //   foundResponse.count = parsedResponse.count;
-    //   setQuestion(copyQuestion);
-    // }
 
     socket.on('connect', onConnect);
     socket.on('disconnect', onDisconnect);
-    // socket.on(pollId.toString(), updateResponseCount);
-    
-/* 
-function App() {
-      const [fooEvents, setFooEvents] = useState([]);
-    
-      useEffect(() => {
-        // no-op if the socket is already connected
-        socket.connect();
-    
-        return () => {
-          socket.disconnect();
-        };
-      }, []);
-    
-      useEffect(() => {
-        function onFooEvent(value) {
-          setFooEvents(fooEvents.concat(value));
-        }
-    
-        socket.on('foo', onFooEvent);
-    
-        return () => {
-          socket.off('foo', onFooEvent);
-        };
-      }, [fooEvents]);
-    
-      // ...
-    } 
-*/
 
     return () => {
       socket.off('connect', onConnect);
