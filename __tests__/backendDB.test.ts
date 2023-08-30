@@ -1,36 +1,21 @@
-// import * as dotenv from 'dotenv';
-// import { Pool, QueryResult } from 'pg';
+import * as dotenv from 'dotenv';
+import pool from '../server/Models/queryModel';
 
-// dotenv.config();
+dotenv.config();
 
-// const DB_PORT = parseInt(process.env.SUPABASE_PORT, 10)
+// console.log('supabase db name hopefully: ', process.env.SUPABASE_DB_NAME)
 
-// const poolConfig = {
-//   connectionString: process.env.SUPABASE_CONNECTION_STRING,
-//   user: process.env.SUPABASE_USER,
-//   database: process.env.SUPABASE_DB_NAME,
-//   password: process.env.SUPABASE_PASSWORD,
-//   port: DB_PORT,
-//   host: process.env.SUPABASE_HOST
-// }
-
-// // console.log(poolConfig);
-
-// const pool = new Pool(poolConfig);
-
-// describe('Database Connection Test', () => {
-//   it('should connect to the database', async () => {
-//     // Get the current time from the database, connection test
-//     const query = 'SELECT NOW()';
-//     let result: QueryResult;
-
-//     try {
-//       result = await pool.query(query);
-//     } catch (error) {
-//       // Handle connection errors
-//       throw new Error(`Error connecting to the database: ${error}`);
-//     }
-
-//     expect(result.rows.length).toBeGreaterThan(0);
-//   });
-// });
+describe('Database Connection Test', () => {
+  it('should connect to the database', async () => {
+    // Get the current time from the database, connection test
+    // console.log(process.env)
+    try {
+      const result = await pool.query('SELECT NOW()');
+      // console.log(result);
+      expect(result.rows).toBeTruthy();
+    } catch (error) {
+      // Handle connection errors
+      throw new Error(`Error connecting to the database: ${error}`);
+    }
+  });
+});
