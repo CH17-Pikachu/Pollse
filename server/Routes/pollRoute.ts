@@ -4,6 +4,7 @@
 import express from 'express';
 import PollController from '../Controllers/PollController';
 import UserController from '../Controllers/UserController';
+import { Question } from '../../types/types';
 
 const router = express.Router();
 
@@ -31,6 +32,7 @@ router.get(
  */
 router.patch(
   '/startPoll/:roomCode',
+  PollController.verifyRoomCode,
   PollController.populateQuestions,
   PollController.setLifetime, // TODO this is stretch goal
   PollController.startPoll,
@@ -43,9 +45,14 @@ router.patch(
  * Endpoint for stopping poll
  * This will be where we add functionality to save poll results to a presenter
  */
-router.patch('/endPoll/:roomCode', PollController.stopPoll, (req, res) => {
-  res.sendStatus(200);
-});
+router.patch(
+  '/endPoll/:roomCode',
+  PollController.verifyRoomCode,
+  PollController.stopPoll,
+  (req, res) => {
+    res.sendStatus(200);
+  },
+);
 
 /**
  * Audience member pulling questions for them to answer after reaching endpoint at
@@ -53,9 +60,11 @@ router.patch('/endPoll/:roomCode', PollController.stopPoll, (req, res) => {
  */
 router.get(
   '/questionsInPoll/:roomCode',
+  PollController.verifyRoomCode,
   PollController.getQuestionsInPoll,
   (req, res) => {
-    res.sendStatus(200);
+    const { questions } = res.locals as { questions: Question[] };
+    res.status(200).json({ questions: res.locals.questions });
   },
 );
 
@@ -65,6 +74,7 @@ router.get(
  */
 router.post(
   '/newAnswers/:roomCode',
+  PollController.verifyRoomCode,
   PollController.checkOpen,
   PollController.recordResponses,
   (req, res) => {
